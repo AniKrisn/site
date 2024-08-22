@@ -8,21 +8,21 @@ body {
 }
 
 .name {
-    font-size: 1.2vw;
+    font-size: 20px;
     padding-bottom: 12px;
 }
 
 .about-text {
     padding-top: 12px;
     padding-left: 20px;
-    font-size: 0.8vw;
+    font-size: 12px
 }
 
 ol {
     display: flex;
     flex-direction: column;
     padding-bottom: 12px;
-    font-size: 1.1vw;
+    font-size: 16px;
 }
 
 a {
