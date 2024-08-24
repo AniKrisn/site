@@ -67,16 +67,18 @@ li {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-color: #0068d8;
+    background-color: #1a1a1ab9;
     border: none;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, opacity 0.3s;
 }
 
-.circle-button:hover {
+body .circle-button:hover {
     background-color: #1a1a1a;
 }
+
+
 
 body.dark-mode {
     --bg-color: #1a1a1a;
@@ -88,5 +90,5 @@ body.dark-mode .circle-button {
 }
 
 body.dark-mode .circle-button:hover {
-    background-color: #ffffff;
+    background-color: #fff7cc;
 }
