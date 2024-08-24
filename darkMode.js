@@ -18,5 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('darkMode') === 'true') {
         document.body.classList.add('dark-mode');
     }
-});
 
+    // Move these lines inside the DOMContentLoaded event listener
+    let scrollTimer;
+
+    if (darkModeToggle) {
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 1000) {
+                darkModeToggle.style.opacity = '0';
+                
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(() => {
+                    darkModeToggle.style.opacity = '1';
+                }, 1100); 
+            }
+        });
+    }
+});

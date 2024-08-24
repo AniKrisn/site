@@ -47,19 +47,6 @@ li {
     padding-bottom: 0;
 }
 
-@media (max-width: 768px) {
-    li {
-        padding-bottom: 18px;
-    }
-
-    body,
-    .about-text,
-    ol,
-    ul {
-        padding-left: 0;
-    }
-}
-
 .circle-button {
     position: fixed;
     bottom: 15%;
@@ -91,4 +78,22 @@ body.dark-mode .circle-button {
 
 body.dark-mode .circle-button:hover {
     background-color: #fff7cc;
+}
+
+@media (max-width: 1280px) {
+    li {
+        padding-bottom: 18px;
+    }
+
+    body,
+    .about-text,
+    ol,
+    ul {
+        padding-left: 0;
+    }
+
+    .circle-button {
+        top: auto;
+        opacity: 1;
+    }
 }
