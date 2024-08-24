@@ -14,21 +14,6 @@
         </ol>
     </main>
 
-    <button id="darkModeToggle" class="circle-button" aria-label="Toggle Dark Mode"></button>
-
-    <script>
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-        });
-
-        // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'true') {
-            body.classList.add('dark-mode');
-        }
-    </script>
+    <script src="darkMode.js"></script>
 </body>
 </html>
