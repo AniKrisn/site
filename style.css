@@ -45,4 +45,10 @@ li {
     li {
         padding-bottom: 18px;
     }
+
+    .about-text,
+    ol,
+    ul {
+        padding-left: 0;
+    }
 }
