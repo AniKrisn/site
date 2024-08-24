@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearTimeout(scrollTimer);
                 scrollTimer = setTimeout(() => {
                     darkModeToggle.style.opacity = '1';
-                }, 1100); 
+                }, 1600); 
             }
         });
     }
