@@ -82,6 +82,7 @@ body.dark-mode .circle-button:hover {
 
 .photo-page {
     padding-left: 0;
+    padding-top: 15%;
 }
 
 .photo-album {
@@ -102,7 +103,7 @@ body.dark-mode .circle-button:hover {
 
 .nav-btn {
     font-size: 12px;
-    padding: 40vh 10%;
+    padding: 20% 5%;
     background-color: rgba(0, 0, 0, 0.5);
     color: rgba(244, 0, 0, 0);
     border: none;
@@ -140,9 +141,19 @@ body.dark-mode .nav-btn:hover {
         opacity: 1;
     }
 
+    .photo-page {
+        padding-top: 30%;
+    }
+
     #photo {
-        max-width: 50vw;
-        max-height: 80vh;
-        object-fit: cover;
+        max-width: 80vw;
+        max-height: 60vh;
+        object-fit: fill;
+    }
+}
+
+@media (height < 720px) or (width > 720px) {
+    .photo-page {
+        padding-top: 15%;
     }
 }
