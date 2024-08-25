@@ -48,9 +48,6 @@ li {
 }
 
 .circle-button {
-    position: fixed;
-    bottom: 15%;
-    right: 15%;
     width: 30px;
     height: 30px;
     border-radius: 50%;
