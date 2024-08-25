@@ -40,43 +40,37 @@ document.addEventListener('DOMContentLoaded', () => {
     let startX, startY;
 
     darkModeToggle.addEventListener('mousedown', (e) => {
-        isDragging = false;
-        startX = e.clientX;
-        startY = e.clientY;
+        isDragging = true;
+        startX = e.clientX - darkModeToggle.offsetLeft;
+        startY = e.clientY - darkModeToggle.offsetTop;
         e.preventDefault(); // Prevent text selection
     });
 
     document.addEventListener('mousemove', (e) => {
-        if (e.buttons !== 1) return; // Check if left mouse button is pressed
+        if (!isDragging) return;
         
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
+        const newRight = window.innerWidth - (e.clientX - startX) - darkModeToggle.offsetWidth;
+        const newBottom = window.innerHeight - (e.clientY - startY) - darkModeToggle.offsetHeight;
         
-        if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-            isDragging = true;
-            
-            const newRight = parseInt(darkModeToggle.style.right || '0') - deltaX;
-            const newBottom = parseInt(darkModeToggle.style.bottom || '0') - deltaY;
-            
-            // Constrain to window boundaries
-            darkModeToggle.style.right = Math.max(0, Math.min(newRight, window.innerWidth - darkModeToggle.offsetWidth)) + 'px';
-            darkModeToggle.style.bottom = Math.max(0, Math.min(newBottom, window.innerHeight - darkModeToggle.offsetHeight)) + 'px';
-            
-            startX = e.clientX;
-            startY = e.clientY;
-        }
+        // Constrain to window boundaries
+        darkModeToggle.style.right = Math.max(0, Math.min(newRight, window.innerWidth - darkModeToggle.offsetWidth)) + 'px';
+        darkModeToggle.style.bottom = Math.max(0, Math.min(newBottom, window.innerHeight - darkModeToggle.offsetHeight)) + 'px';
     });
 
-    darkModeToggle.addEventListener('mouseup', () => {
-        if (!isDragging) {
-            document.body.classList.toggle('dark-mode');
-            sessionStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        } else {
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
             // Save the new position to sessionStorage
             sessionStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
             sessionStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
         }
         isDragging = false;
+    });
+
+    darkModeToggle.addEventListener('click', (e) => {
+        if (!isDragging) {
+            document.body.classList.toggle('dark-mode');
+            sessionStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
     });
 
     // Update button style for draggability
