@@ -38,11 +38,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dark mode toggle functionality
     let isDragging = false;
     let startX, startY;
+    let velocityX = 0, velocityY = 0;
+    let lastX, lastY;
+    let animationId;
 
     darkModeToggle.addEventListener('mousedown', (e) => {
         isDragging = true;
         startX = e.clientX - darkModeToggle.offsetLeft;
         startY = e.clientY - darkModeToggle.offsetTop;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        cancelAnimationFrame(animationId);
         e.preventDefault(); // Prevent text selection
     });
 
@@ -52,19 +58,73 @@ document.addEventListener('DOMContentLoaded', () => {
         const newRight = window.innerWidth - (e.clientX - startX) - darkModeToggle.offsetWidth;
         const newBottom = window.innerHeight - (e.clientY - startY) - darkModeToggle.offsetHeight;
         
-        // Constrain to window boundaries
         darkModeToggle.style.right = Math.max(0, Math.min(newRight, window.innerWidth - darkModeToggle.offsetWidth)) + 'px';
         darkModeToggle.style.bottom = Math.max(0, Math.min(newBottom, window.innerHeight - darkModeToggle.offsetHeight)) + 'px';
+
+        velocityX = e.clientX - lastX;
+        velocityY = e.clientY - lastY;
+        lastX = e.clientX;
+        lastY = e.clientY;
     });
 
     document.addEventListener('mouseup', () => {
         if (isDragging) {
-            // Save the new position to sessionStorage
             sessionStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
             sessionStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+            applyMomentum();
         }
         isDragging = false;
     });
+
+    function applyMomentum() {
+        const friction = 0.96;
+        const minVelocity = 0.1;
+        const bounceFactor = 0.7;
+
+        function animate() {
+            if (Math.abs(velocityX) > minVelocity || Math.abs(velocityY) > minVelocity) {
+                const currentRight = parseInt(darkModeToggle.style.right);
+                const currentBottom = parseInt(darkModeToggle.style.bottom);
+
+                let newRight = currentRight - velocityX;
+                let newBottom = currentBottom - velocityY;
+
+                // Bounce off right wall
+                if (newRight < 0) {
+                    newRight = 0;
+                    velocityX = -velocityX * bounceFactor;
+                }
+                // Bounce off left wall
+                if (newRight > window.innerWidth - darkModeToggle.offsetWidth) {
+                    newRight = window.innerWidth - darkModeToggle.offsetWidth;
+                    velocityX = -velocityX * bounceFactor;
+                }
+                // Bounce off bottom wall
+                if (newBottom < 0) {
+                    newBottom = 0;
+                    velocityY = -velocityY * bounceFactor;
+                }
+                // Bounce off top wall
+                if (newBottom > window.innerHeight - darkModeToggle.offsetHeight) {
+                    newBottom = window.innerHeight - darkModeToggle.offsetHeight;
+                    velocityY = -velocityY * bounceFactor;
+                }
+
+                darkModeToggle.style.right = newRight + 'px';
+                darkModeToggle.style.bottom = newBottom + 'px';
+
+                velocityX *= friction;
+                velocityY *= friction;
+
+                animationId = requestAnimationFrame(animate);
+            } else {
+                sessionStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+                sessionStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+            }
+        }
+
+        animate();
+    }
 
     darkModeToggle.addEventListener('click', (e) => {
         if (!isDragging) {
