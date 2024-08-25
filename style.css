@@ -45,7 +45,15 @@ ol {
 a {
     margin-bottom: 4px;
     text-decoration: none;
-    color: inherit;
+    color: inherit;    
+}
+
+a:hover {
+    color: #2eafd0;
+}
+
+body.dark-mode a:hover {
+    color: #ffd700;
 }
 
 ul {
@@ -161,6 +169,16 @@ body.dark-mode .nav-btn:hover {
 
 body.dark-mode .social-icon {
     filter: invert(1);
+    transition: filter 0.3s;
+}
+
+.social-icon:hover {
+    filter: invert(0.5);
+    transition: filter 0.3s;
+}
+
+body.dark-mode .social-icon:hover {
+    filter: invert(0.5);
     transition: filter 0.3s;
 }
 
