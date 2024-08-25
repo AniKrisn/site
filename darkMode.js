@@ -10,15 +10,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set initial position
     function setInitialPosition() {
-        const padding = 0.15; // 15% padding
-        const buttonWidth = darkModeToggle.offsetWidth;
-        const buttonHeight = darkModeToggle.offsetHeight;
+        const savedRight = localStorage.getItem('darkModeButtonRight');
+        const savedBottom = localStorage.getItem('darkModeButtonBottom');
         
-        const right = window.innerWidth * padding;
-        const bottom = window.innerHeight * padding;
-        
-        darkModeToggle.style.right = right + 'px';
-        darkModeToggle.style.bottom = bottom + 'px';
+        if (savedRight && savedBottom) {
+            darkModeToggle.style.right = savedRight;
+            darkModeToggle.style.bottom = savedBottom;
+        } else {
+            const padding = 0.15; // 15% padding
+            const buttonWidth = darkModeToggle.offsetWidth;
+            const buttonHeight = darkModeToggle.offsetHeight;
+            
+            const right = window.innerWidth * padding;
+            const bottom = window.innerHeight * padding;
+            
+            darkModeToggle.style.right = right + 'px';
+            darkModeToggle.style.bottom = bottom + 'px';
+        }
     }
 
     // Call setInitialPosition after appending the button
@@ -56,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         darkModeToggle.style.right = newRight + 'px';
         darkModeToggle.style.bottom = newBottom + 'px';
+
+        // Save the new position to localStorage
+        localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+        localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
     });
 
     // Update button style for draggability
