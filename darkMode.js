@@ -12,30 +12,38 @@ document.addEventListener('DOMContentLoaded', () => {
     let velocityX = 0, velocityY = 0;
 
     function setInitialPosition() {
-        const savedRight = localStorage.getItem('darkModeButtonRight');
-        const savedBottom = localStorage.getItem('darkModeButtonBottom');
-        const savedVelocityX = localStorage.getItem('darkModeButtonVelocityX');
-        const savedVelocityY = localStorage.getItem('darkModeButtonVelocityY');
-        
-        if (savedRight && savedBottom) {
-            darkModeToggle.style.right = savedRight;
-            darkModeToggle.style.bottom = savedBottom;
-            
-            if (savedVelocityX && savedVelocityY) {
-                velocityX = parseFloat(savedVelocityX);
-                velocityY = parseFloat(savedVelocityY);
-                requestAnimationFrame(applyMomentum);
-            }
-        } else {
+        if (!sessionStorage.getItem('darkModeButtonInitialized')) {
             const padding = 0.15; // 15% padding
-            const buttonWidth = darkModeToggle.offsetWidth;
-            const buttonHeight = darkModeToggle.offsetHeight;
-            
             const right = window.innerWidth * padding;
             const bottom = window.innerHeight * padding;
             
             darkModeToggle.style.right = right + 'px';
             darkModeToggle.style.bottom = bottom + 'px';
+
+            // Mark as initialized
+            sessionStorage.setItem('darkModeButtonInitialized', 'true');
+            
+            // Clear any existing velocity
+            localStorage.removeItem('darkModeButtonVelocityX');
+            localStorage.removeItem('darkModeButtonVelocityY');
+        } else {
+            // Use saved position from localStorage if available
+            const savedRight = localStorage.getItem('darkModeButtonRight');
+            const savedBottom = localStorage.getItem('darkModeButtonBottom');
+            
+            if (savedRight && savedBottom) {
+                darkModeToggle.style.right = savedRight;
+                darkModeToggle.style.bottom = savedBottom;
+            }
+
+            // Restore velocity
+            velocityX = parseFloat(localStorage.getItem('darkModeButtonVelocityX')) || 0;
+            velocityY = parseFloat(localStorage.getItem('darkModeButtonVelocityY')) || 0;
+
+            // Apply momentum if there was velocity
+            if (velocityX !== 0 || velocityY !== 0) {
+                requestAnimationFrame(applyMomentum);
+            }
         }
     }
 
