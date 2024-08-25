@@ -9,13 +9,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(darkModeToggle);
 
     // Set initial position
+    let velocityX = 0, velocityY = 0;
+
     function setInitialPosition() {
-        const savedRight = sessionStorage.getItem('darkModeButtonRight');
-        const savedBottom = sessionStorage.getItem('darkModeButtonBottom');
+        const savedRight = localStorage.getItem('darkModeButtonRight');
+        const savedBottom = localStorage.getItem('darkModeButtonBottom');
+        const savedVelocityX = localStorage.getItem('darkModeButtonVelocityX');
+        const savedVelocityY = localStorage.getItem('darkModeButtonVelocityY');
         
         if (savedRight && savedBottom) {
             darkModeToggle.style.right = savedRight;
             darkModeToggle.style.bottom = savedBottom;
+            
+            if (savedVelocityX && savedVelocityY) {
+                velocityX = parseFloat(savedVelocityX);
+                velocityY = parseFloat(savedVelocityY);
+                requestAnimationFrame(applyMomentum);
+            }
         } else {
             const padding = 0.15; // 15% padding
             const buttonWidth = darkModeToggle.offsetWidth;
@@ -38,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dark mode toggle functionality
     let isDragging = false;
     let startX, startY;
-    let velocityX = 0, velocityY = 0;
     let lastX, lastY;
     let animationId;
 
@@ -69,8 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('mouseup', () => {
         if (isDragging) {
-            sessionStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
-            sessionStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+            localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+            localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+            localStorage.setItem('darkModeButtonVelocityX', velocityX.toString());
+            localStorage.setItem('darkModeButtonVelocityY', velocityY.toString());
             applyMomentum();
         }
         isDragging = false;
@@ -116,10 +127,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 velocityX *= friction;
                 velocityY *= friction;
 
+                localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+                localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+                localStorage.setItem('darkModeButtonVelocityX', velocityX.toString());
+                localStorage.setItem('darkModeButtonVelocityY', velocityY.toString());
+
                 animationId = requestAnimationFrame(animate);
             } else {
-                sessionStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
-                sessionStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+                localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+                localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+                localStorage.removeItem('darkModeButtonVelocityX');
+                localStorage.removeItem('darkModeButtonVelocityY');
             }
         }
 
