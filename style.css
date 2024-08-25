@@ -143,10 +143,10 @@ body.dark-mode .nav-btn:hover {
 }
 
 .social-icon {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     margin-top: 10px;
-    padding-left: 10px;
+    padding-left: 7px;
 }
 
 body.dark-mode .social-icon {
