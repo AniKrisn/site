@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set initial position
     function setInitialPosition() {
-        const savedRight = localStorage.getItem('darkModeButtonRight');
-        const savedBottom = localStorage.getItem('darkModeButtonBottom');
+        const savedRight = sessionStorage.getItem('darkModeButtonRight');
+        const savedBottom = sessionStorage.getItem('darkModeButtonBottom');
         
         if (savedRight && savedBottom) {
             darkModeToggle.style.right = savedRight;
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     darkModeToggle.addEventListener('click', (e) => {
         if (!isDragging) {
             document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            sessionStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         }
     });
 
@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
         darkModeToggle.style.right = newRight + 'px';
         darkModeToggle.style.bottom = newBottom + 'px';
 
-        // Save the new position to localStorage
-        localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
-        localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+        // Save the new position to sessionStorage
+        sessionStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+        sessionStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
     });
 
     // Update button style for draggability
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     darkModeToggle.style.cursor = 'move';
 
     // Check for saved dark mode preference
-    if (localStorage.getItem('darkMode') === 'true') {
+    if (sessionStorage.getItem('darkMode') === 'true') {
         document.body.classList.add('dark-mode');
     }
 
