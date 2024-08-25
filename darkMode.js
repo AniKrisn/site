@@ -39,35 +39,44 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDragging = false;
     let startX, startY;
 
-    darkModeToggle.addEventListener('click', (e) => {
-        if (!isDragging) {
-            document.body.classList.toggle('dark-mode');
-            sessionStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        }
-    });
-
     darkModeToggle.addEventListener('mousedown', (e) => {
         isDragging = false;
-        startX = e.clientX - darkModeToggle.offsetLeft;
-        startY = e.clientY - darkModeToggle.offsetTop;
+        startX = e.clientX;
+        startY = e.clientY;
+        e.preventDefault(); // Prevent text selection
     });
 
     document.addEventListener('mousemove', (e) => {
         if (e.buttons !== 1) return; // Check if left mouse button is pressed
-        isDragging = true;
-        let newRight = window.innerWidth - (e.clientX - startX) - darkModeToggle.offsetWidth;
-        let newBottom = window.innerHeight - (e.clientY - startY) - darkModeToggle.offsetHeight;
         
-        // Constrain to window boundaries
-        newRight = Math.max(0, Math.min(newRight, window.innerWidth - darkModeToggle.offsetWidth));
-        newBottom = Math.max(0, Math.min(newBottom, window.innerHeight - darkModeToggle.offsetHeight));
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        
+        if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+            isDragging = true;
+            
+            const newRight = parseInt(darkModeToggle.style.right || '0') - deltaX;
+            const newBottom = parseInt(darkModeToggle.style.bottom || '0') - deltaY;
+            
+            // Constrain to window boundaries
+            darkModeToggle.style.right = Math.max(0, Math.min(newRight, window.innerWidth - darkModeToggle.offsetWidth)) + 'px';
+            darkModeToggle.style.bottom = Math.max(0, Math.min(newBottom, window.innerHeight - darkModeToggle.offsetHeight)) + 'px';
+            
+            startX = e.clientX;
+            startY = e.clientY;
+        }
+    });
 
-        darkModeToggle.style.right = newRight + 'px';
-        darkModeToggle.style.bottom = newBottom + 'px';
-
-        // Save the new position to sessionStorage
-        sessionStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
-        sessionStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+    darkModeToggle.addEventListener('mouseup', () => {
+        if (!isDragging) {
+            document.body.classList.toggle('dark-mode');
+            sessionStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        } else {
+            // Save the new position to sessionStorage
+            sessionStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+            sessionStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+        }
+        isDragging = false;
     });
 
     // Update button style for draggability

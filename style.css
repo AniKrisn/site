@@ -3,6 +3,16 @@
     --text-color: rgb(22, 22, 22);
 }
 
+/* Hide scrollbar */
+html {
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+}
+html::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+}
+
+
 body {
     font-family: monospace;
     line-height: 1.6;
