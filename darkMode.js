@@ -12,37 +12,47 @@ document.addEventListener('DOMContentLoaded', () => {
     let velocityX = 0, velocityY = 0;
 
     function setInitialPosition() {
-        if (!sessionStorage.getItem('darkModeButtonInitialized')) {
-            const padding = 0.15; // 15% padding
-            const right = window.innerWidth * padding;
-            const bottom = window.innerHeight * padding;
-            
-            darkModeToggle.style.right = right + 'px';
-            darkModeToggle.style.bottom = bottom + 'px';
+        const isEssaysPage = window.location.pathname.endsWith("primitives.html");
+        if (isEssaysPage) {
+            darkModeToggle.style.position = 'fixed';
+            darkModeToggle.style.top = "10px";
+            darkModeToggle.style.right = "10px";
+        }
+        
+        else {
 
-            // Mark as initialized
-            sessionStorage.setItem('darkModeButtonInitialized', 'true');
-            
-            // Clear any existing velocity
-            localStorage.removeItem('darkModeButtonVelocityX');
-            localStorage.removeItem('darkModeButtonVelocityY');
-        } else {
-            // Use saved position from localStorage if available
-            const savedRight = localStorage.getItem('darkModeButtonRight');
-            const savedBottom = localStorage.getItem('darkModeButtonBottom');
-            
-            if (savedRight && savedBottom) {
-                darkModeToggle.style.right = savedRight;
-                darkModeToggle.style.bottom = savedBottom;
-            }
+            if (!sessionStorage.getItem('darkModeButtonInitialized')) {
+                const padding = 0.15; // 15% padding
+                const right = window.innerWidth * padding;
+                const bottom = window.innerHeight * padding;
+                
+                darkModeToggle.style.right = right + 'px';
+                darkModeToggle.style.bottom = bottom + 'px';
 
-            // Restore velocity
-            velocityX = parseFloat(localStorage.getItem('darkModeButtonVelocityX')) || 0;
-            velocityY = parseFloat(localStorage.getItem('darkModeButtonVelocityY')) || 0;
+                // Mark as initialized
+                sessionStorage.setItem('darkModeButtonInitialized', 'true');
+                
+                // Clear any existing velocity
+                localStorage.removeItem('darkModeButtonVelocityX');
+                localStorage.removeItem('darkModeButtonVelocityY');
+            } else {
+                // Use saved position from localStorage if available
+                const savedRight = localStorage.getItem('darkModeButtonRight');
+                const savedBottom = localStorage.getItem('darkModeButtonBottom');
+                
+                if (savedRight && savedBottom) {
+                    darkModeToggle.style.right = savedRight;
+                    darkModeToggle.style.bottom = savedBottom;
+                }
 
-            // Apply momentum if there was velocity
-            if (velocityX !== 0 || velocityY !== 0) {
-                requestAnimationFrame(applyMomentum);
+                // Restore velocity
+                velocityX = parseFloat(localStorage.getItem('darkModeButtonVelocityX')) || 0;
+                velocityY = parseFloat(localStorage.getItem('darkModeButtonVelocityY')) || 0;
+
+                // Apply momentum if there was velocity
+                if (velocityX !== 0 || velocityY !== 0) {
+                    requestAnimationFrame(applyMomentum);
+                }
             }
         }
     }

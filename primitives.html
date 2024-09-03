@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>primitives</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        window.onload = function() {
+            const targetSection = document.getElementById('essay'); 
+            if (targetSection) {
+                targetSection.scrollIntoView(); 
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="name"><a href="index.html">↩</a></div>
+
+    <div id="essay">
+    <h4>Background</h4>
+    <p>I enjoyed studying computability theory; there were a few ideas that really stuck.
+        A vast class of complexity can arise from scaling a few primitive functions.
+        The scaling process, and in particular the primitives themselves, can be simple.
+        If you have an array of numbers, you get huge results just with the successor function ("add 1 to this value"),
+        zero function ("make this value 0"), some ability to move values around, and some way to check equivalence between
+        them. With just those primitives, and scale, you get a good chunk of what one is able to express in mathematical
+        language. In fact, it is difficult to find functions that you <i>can't</i> get from scaling those simple primitives
+        (especially ones that are useful or interesting). Actually, that's what computability theory is about - figuring
+        out what the limits are; what we <i>can't</i> get from scale.
+    </p>
+    <p>
+        It was that idea in particular: there's a lot of power and awe in scaling the right primitives.
+    </p>
+    <p>
+        We see this elsewhere: every subfield of mathematics has vast complexity arising from various scaling rules
+        (in this case, rules of logical inference) and a certain set of axioms. Change the axioms, and you get a different
+        field of math. The choice of axioms is an interesting discussion, but rarely a part of education (maybe for good
+        reason; better to just <i>get on with it</i>). In set theory, this discussion has been ongoing for a couple hundred years.
+    </p>
+    <p>
+        There are, and have been for some time, similar observations in machine learning:
+    </p>
+
+    <blockquote>
+        The <u><a href="https://gwern.net/scaling-hypothesis#blessings-of-scale">blessings of scale</a></u> is the
+        observation that for deep learning, hard problems are easier to solve than easy problems—everything gets better as
+        it gets larger (in contrast to the usual outcome in research, where small things are hard and large things
+        impossible). The bigger the neural net/compute/data/problem, the faster it learns, the better it learns, the
+        stabler it learns, and so on. A problem we can't solve at all at small <i>n</i> may suddenly become straightforward
+        with millions or billions of <i>n</i>. “NNs are lazy”: they can do far more than we make them do when we push them beyond
+        easy answers & cheap shortcuts. The <u><a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">bitter lesson</a></u>
+        is the harder and bigger, the better.
+        <p style="text-align: right; margin-top: -0.5vh;">(<u><a href="https://gwern.net/scaling-hypothesis">The Scaling Hypothesis</a></u>)</p>
+    </blockquote>
+
+    <p>
+        Here there are some really interesting <u><a href="https://www.dwarkeshpatel.com/p/will-scaling-work">questions posed</a></u> about the
+        consequences and limits of scale.
+    </p>
+
+    <p>
+        There are other examples in cellular automata theory (e.g. Game of Life), statistical mechanics (Boids algorithm and flocking birds),
+        graph theory (social networks), economics (supply and demand/game theory). These are not evolutionary processes, because there need
+        not be variation or selection/survival pressures - rather, there are simple primitives and scaling processes carried out over enough
+        time/iterations for emergent complexity to arrive.
+    </p>
+
+    <p>
+        There's something to say about abusing mathematical concepts by using them outside of their rigorous and insulated home environment.
+        But I enjoy seeing the ways in which the patterns unfold in total abstraction and later try to notice whether they unfold outside too:
+        on the roadside, in bars and restaurants, in schools and hospitals, with real people and real struggles. In this case, it's been pretty
+        interesting; watching the primitives scale the mundane. 
+    </p>
+    <h4>Metaphor</h4>
+    <p>
+        Times before were simpler. Culture was simpler: relationships, politics, morality. And then: work, bureaucracy, everything the average
+        person has to do, just to get by. The daily life of the citizenry has been drenched in complexity, and some are drowning.
+    </p>
+
+    <p>
+        One of <u><a href="https://x.com/visakanv/status/1588796630287147009?lang=en">Visa's</a></u> talking points is that while "our ancestors got picked off
+        by megafauna, our peers get picked off by psychofauna". Megafauna meaning "big scary tiger", and psychofauna meaning "infohazards"
+        (i.e. harmful memes/ideologies). Both are exceedingly difficult to fend against when you do not have the right tools, and the tools in
+        each case look very different. 
+    </p>
+
+    <p>
+        For example: in the past it was necessary to be resourceful. There's a part from <i>Titan, The Life of John D. Rockefeller</i> that I like, where Rockefeller
+        recalls a story about his mother from when he was young:
+    </p>
+
+    <blockquote>
+        Mother had whooping cough and was staying in her room so that we should not catch it. When she heard thieves trying to get at the back of the house
+        and remembered that there was no man to protect us, she softly opened the window and began to sing some old Negro melody, just as if the family were up
+        and about. The robbers turned away from the house, crossed the road to the carriage house, stole a set of harness and went down the hill to their boat at
+        the shore.
+    </blockquote>
+
+    <p>
+        When resources are scarce, survival requires getting more from less. That's not really how it goes anymore -resourcefulness is still rewarded, but it's
+        not as much a necessity. Unless, you're throwing yourself into relative scarcity - in
+        <u><a href="https://paulgraham.com/relres.html">startups</a></u>, <u><a href="https://www.youtube.com/watch?v=EWPi4zjltq4">sport</a></u> or elsewhere. 
+    </p>
+
+    <p>
+        I think that doing well now (in more complex environments) demands perspicacity and the ability to spot things. Taking in a lot of information and pruning it down to what really matters. Creation through removal.
+    </p>
+
+
+    </div>
+
+    <script src="darkMode.js"></script>
+</body>
+</html>

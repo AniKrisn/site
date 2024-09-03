@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>akrishnan</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        window.onload = function() {
+            const targetSection = document.getElementById('start'); 
+            if (targetSection) {
+                targetSection.scrollIntoView(); 
+            }
+        };
+    </script>
 </head>
 <body>
     <main>
-        <div class="name"><a href="index.html">Ani Krishnan</a></div>
-        <ul>
+        <div class="name"><a href="index.html">↩</a></div>
+        <ul id="start">
             <li><b><u>Recent/Current</u></b></li>
             <li><b>Books:</b></li>
             <li>James C. Scott - <i>Seeing Like a State</i></li>
