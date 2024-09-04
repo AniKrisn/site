@@ -56,6 +56,16 @@ a {
     color: inherit;    
 }
 
+ul {
+    list-style-type: none;
+    padding-left: 8px;
+}
+
+li {
+    padding-bottom: 0;
+}
+
+#quote:hover,
 a:hover {
     color: #ffd700;
 }
@@ -64,13 +74,16 @@ body.dark-mode a:hover {
     color: #2eafd0;
 }
 
-ul {
-    list-style-type: none;
-    padding-left: 8px;
+#quote {
+    color: rgb(255, 255, 175);
 }
 
-li {
-    padding-bottom: 0;
+body.dark-mode #quote {
+    color: #6faab8;
+}
+
+body.dark-mode #quote:hover {
+    color: #03cdff;
 }
 
 .circle-button {
