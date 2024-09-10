@@ -1,6 +1,6 @@
 :root {
-    --bg-color: #1a1a1a;
-    --text-color: #ffffff;
+    --bg-color: #baffd823;
+    --text-color: rgb(22, 22, 22);
 }
 
 /* Hide scrollbar */
@@ -67,30 +67,30 @@ li {
 
 #quote:hover,
 a:hover {
-    color: #ffd700;
+    color: #03cdff;
 }
 
 body.dark-mode a:hover {
-    color: #2eafd0;
+    color: #ffd700;
 }
 
 #quote {
-    color: rgb(255, 255, 175);
-}
-
-body.dark-mode #quote {
     color: #6faab8;
 }
 
+body.dark-mode #quote {
+    color: rgb(255, 255, 175);
+}
+
 body.dark-mode #quote:hover {
-    color: #03cdff;
+    color: #ffd700;
 }
 
 .circle-button {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-color: #ffd700;
+    background-color: #1a1a1ab9;
     border: none;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -98,21 +98,21 @@ body.dark-mode #quote:hover {
 }
 
 body .circle-button:hover {
-    background-color: #fff7cc;
+    background-color: #1a1a1a;
 }
 
 body.dark-mode {
-    --bg-color: #baffd823;
-    --text-color: rgb(22, 22, 22);
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
 }
 
 body.dark-mode .circle-button {
-    background-color: #1a1a1ab9;
+    background-color: #ffd700;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 body.dark-mode .circle-button:hover {
-    background-color: #1a1a1a;
+    background-color: #fff7cc;
 }
 
 .photo-page {

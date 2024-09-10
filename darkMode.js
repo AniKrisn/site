@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Create the button
+    const isEssaysPage = window.location.pathname.endsWith("primitives.html");
     const darkModeToggle = document.createElement('button');
     darkModeToggle.id = 'darkModeToggle';
     darkModeToggle.className = 'circle-button';
@@ -12,10 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let velocityX = 0, velocityY = 0;
 
     function setInitialPosition() {
-        const isEssaysPage = window.location.pathname.endsWith("primitives.html");
         if (isEssaysPage) {
             darkModeToggle.style.position = 'fixed';
-            darkModeToggle.style.top = "10px";
+            darkModeToggle.style.bottom = "10px";
             darkModeToggle.style.right = "10px";
         }
         
@@ -88,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.addEventListener('mousemove', (e) => {
+        if (isEssaysPage) return;
         if (!isDragging) return;
         
         const newRight = window.innerWidth - (e.clientX - startX) - darkModeToggle.offsetWidth;
