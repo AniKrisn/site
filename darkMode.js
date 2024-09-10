@@ -79,6 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault(); // Prevent text selection
     });
 
+    // Add a goal area on the right side of the screen
+    const goalArea = {
+        x: window.innerWidth - 100, // Adjust the position as needed
+        y: 100, // Adjust the position as needed
+        width: 100,
+        height: window.innerHeight - 200 // Adjust the height as needed
+    };
+
     document.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
         
@@ -87,6 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         darkModeToggle.style.right = Math.max(0, Math.min(newRight, window.innerWidth - darkModeToggle.offsetWidth)) + 'px';
         darkModeToggle.style.bottom = Math.max(0, Math.min(newBottom, window.innerHeight - darkModeToggle.offsetHeight)) + 'px';
+
+        // Check if the button enters the goal area
+        if (newRight >= goalArea.x && newBottom >= goalArea.y && newBottom <= goalArea.y + goalArea.height) {
+            // Button entered the goal area, trigger confetti falling
+            triggerConfetti();
+        }
 
         velocityX = e.clientX - lastX;
         velocityY = e.clientY - lastY;
@@ -190,4 +204,10 @@ document.addEventListener('DOMContentLoaded', () => {
             darkModeToggle.style.opacity = '1';
         }, 1600); 
     });
+
+    // Function to trigger confetti falling when the button enters the goal area
+    function triggerConfetti() {
+        // Add your confetti falling logic here
+        // You can use libraries like confetti-js for this purpose
+    }
 });

@@ -18,16 +18,17 @@
     <div class="name"><a href="index.html">↩</a></div>
 
     <div id="essay">
-    <h4>Background</h4>
-    <p>I enjoyed studying computability theory; there were a few ideas that really stuck.
-        A vast class of complexity can arise from scaling a few primitive functions.
-        The scaling process, and in particular the primitives themselves, can be simple.
-        If you have an array of numbers, you get huge results just with the successor function ("add 1 to this value"),
-        zero function ("make this value 0"), some ability to move values around, and some way to check equivalence between
-        them. With just those primitives, and scale, you get a good chunk of what one is able to express in mathematical
-        language. In fact, it is difficult to find functions that you <i>can't</i> get from scaling those simple primitives
-        (especially ones that are useful or interesting). Actually, that's what computability theory is about - figuring
-        out what the limits are; what we <i>can't</i> get from scale.
+    <h3>Looking for Primitives: A Way to Dissolve Complexity</h3>
+    <h4>1: Background</h4>
+    <p>There are a couple ideas from computability theory I find endlessly fascinating.
+        A vast class of complexity can arise from scaling a few
+        <u><a href="https://en.wikipedia.org/wiki/General_recursive_function" id="quote">primitive functions.</a></u>
+        The scaling process, and in particular the primitives themselves, can be simple. If you have an array of numbers, you get
+        huge results just with the successor function ("add 1 to this value"), zero function ("make this value 0"), some ability
+        to move values around, and some way to check equivalence between them. With just those primitives, and scale, you get a
+        good chunk of what one is able to express in mathematical language. In fact, it is difficult to find functions that you
+        <i>can't</i> get from scaling those simple primitives (especially ones that are useful or interesting). Actually, that's what
+        computability theory is about - figuring out what the limits are; what we <i>can't</i> get from scale. 
     </p>
     <p>
         It was that idea in particular: there's a lot of power and awe in scaling the right primitives.
@@ -60,19 +61,23 @@
     </p>
 
     <p>
-        There are other examples in cellular automata theory (e.g. Game of Life), statistical mechanics (Boids algorithm and flocking birds),
-        graph theory (social networks), economics (supply and demand/game theory). These are not evolutionary processes, because there need
-        not be variation or selection/survival pressures - rather, there are simple primitives and scaling processes carried out over enough
+        There are other examples in cellular automata theory (e.g. Game of Life, in which a handful of simple rules can
+        give rise to life-like patterns), statistical mechanics (e.g <u><a href="https://eater.net/boids" id="quote">Boids algorithm</a></u>, a program
+        that simulates the flocking behaviour of birds), graph theory (e.g the compounding effects of social networks as they
+        scale), economics (e.g the compounding effects of simple supply/demand rules), and many more fields I'm not at all
+        qualified to talk about. These aren't evolutionary processes, because there need not be variation or selection/survival
+        pressures - rather, the selected variables <i>are</i> the simple primitives and scaling processes carried out over enough
         time/iterations for emergent complexity to arrive.
     </p>
 
     <p>
-        There's something to say about abusing mathematical concepts by using them outside of their rigorous and insulated home environment.
-        But I enjoy seeing the ways in which the patterns unfold in total abstraction and later try to notice whether they unfold outside too:
-        on the roadside, in bars and restaurants, in schools and hospitals, with real people and real struggles. In this case, it's been pretty
-        interesting; watching the primitives scale the mundane. 
+        There's something to say about abusing mathematical concepts by using them outside of their insulated home environment.
+        Using concepts metaphorically. That's a balancing act I'm still figuring out. Regardless, I enjoy seeing the ways in which
+        the patterns unfold in total abstraction and later trying to notice whether they unfold outside too: on the roadside, in
+        bars and restaurants, in schools and hospitals, with real people and real struggles. This case has been interesting;
+        watching the primitives scale the mundane. 
     </p>
-    <h4>Metaphor</h4>
+    <h4>2: Problem</h4>
     <p>
         Times before were simpler. Culture was simpler: relationships, politics, morality. And then: work, bureaucracy, everything the average
         person has to do, just to get by. The daily life of the citizenry has been drenched in complexity, and some are drowning.
@@ -98,15 +103,175 @@
     </blockquote>
 
     <p>
-        When resources are scarce, survival requires getting more from less. That's not really how it goes anymore -resourcefulness is still rewarded, but it's
-        not as much a necessity. Unless, you're throwing yourself into relative scarcity - in
+        When resources are scarce, survival requires getting more from less. Now resourcefulness is rewarded, but it's not as much a necessity -
+        except when you're throwing yourself into relative scarcity, in
         <u><a href="https://paulgraham.com/relres.html" id="quote">startups</a></u>, <u><a href="https://www.youtube.com/watch?v=EWPi4zjltq4" id="quote">sport</a></u> or elsewhere. 
     </p>
 
     <p>
-        I think that doing well now (in more complex environments) demands perspicacity and the ability to spot things. Taking in a lot of information and pruning it down to what really matters. Creation through removal.
+        By comparison, doing well now, I think, requires a certain kind of shrewdness combined with the ability to spot things.
+        Taking in a lot of information and pruning it down to what really matters - the good, and the bad. In games like early-stage
+        investing, doing well comes from spotting good things and being right. Since good spots are few in between, and those good
+        spots make up for all the bad ones, investors are terribly afraid of missing good spots. In games like cybersecurity, doing
+        well comes from spotting bad things and being right.
+        <u><a href="https://www.strangeloopcanon.com/p/we-all-live-on-a-knifes-edge-and" id="quote">"We all live on a knife's edge, and it's fine".</a></u>
+         Psychofauna is the human version of this. Being exposed to vast amounts of information will require individuals and groups to set
+         up cognitive defences against informational pathogens; regulate their information diet and immune system. Experience helps with
+         both, which is maybe in part why 'age of achievement, discovery, agency, and impact <u><a href="https://anilv.com/age" id="quote">is increasing </a></u>
+         across industries and fields.' Complexity is a killer wave. 
     </p>
 
+    <p>
+        So, what to spot? How to look? Here's the idea: if that complexity comes from scale, I think we can get some decent
+        idea by looking for the primitives. Dissolving complexity by figuring out where it came from. I wonder whether seeing
+        scale, seeing opportunities, really amounts to seeing the primitives. Figuring out which primitives you're looking
+        for takes work - and then hard work again in nurturing and scaling correctly. But can a project really take off with
+        the wrong primitives? Can a system scale robustly without the right ones?
+    </p>
+
+    <p>
+        Where some math goes forwards from primitives, computability goes backwards and tries to find the methods of
+        computation that can create the same class of complexity (Church-Turing thesis) - and, of course, its limits.
+    </p>
+
+    <p>
+        Maybe we can go backwards in the class of everyday problems too.
+    </p>
+
+    <h4>3: Solution</h4>
+    <p>We know that foundations matter, and the importance of this idea makes it worth reiterating. But there's more: if
+        thinking from first principles is a model for action, then this is a model for better planning and perception. It
+        may help spot fledgling, tacit traits that have the potential to grow: both constructively, and destructively.
+    </p>
+
+    <p>
+        The results of scale can be modified and erased, but the primitives are stable. Some primitives are created or
+        actively chosen, like "values". Others are assigned, like <u><a href="https://www.jstor.org/stable/1131592" id="quote">basic personality traits.</a></u>
+        Searching for primitives may help with, for example, screening correctly and hiring overlooked and underappreciated
+        <u><a href="https://www.amazon.com/Talent-Identify-Energizers-Creatives-Winners/dp/1250275814/ref=sr_1_1?crid=P7Q5F02VZL2P&dib=eyJ2IjoiMSJ9.trWOQ3gaS70M_vSWq--dGCj69VgeNCmjtQwmz6ZrAl8WkJ9-Ky_j0mpqXw5WSXG7-HjXQaTqNgYQpLBIsDJmVDvvsBtEOi7lzTgcpwYKHd4.xPmZf3TfuXLAgL5NfgbfNj5LJDE1bnE3vbd-eDz4Iyo&dib_tag=se&keywords=talent+tyler+cowen&qid=1725441819&sprefix=talent+tyler+cowe%2Caps%2C309&sr=8-1" id="quote">talent.</a></u>
+        It might help to be wary of structures in which one expects certain primitives that, upon closer inspection, are nowhere to be
+        found. In those structures, if you listen carefully, you might hear <u><a href="https://slatestarcodex.com/2014/07/30/meditations-on-moloch/" id="quote">Moloch</a></u>
+        laughing in the shadows. The primary objective of schools, for example, should be to instil and develop certain primitives:
+        curiosity, playfulness, creativity. We easily spot these in young children. But how about when they grow up through these
+        systems and graduate? Are those key traits still there in those that do well? How about those that don't? We can also spot
+        primitives of great characters in stories who undergo transformations, and primitives of real characters who make change
+        (apart from all the obvious ones, <i>Let My People Go Surfing</i> by Founder of Patagonia, Yvon Chouinard, comes to mind).
+        There are glimpses of character like light seeping in through cracks, and we usually get several chances to notice.
+    </p>
+
+    <p>
+        You can also get a sense for the primitives of different communities. I've forgotten who said it: on Instagram people
+        try to be like brands, and on Twitter brands try to be like people. Parts of a social graph values IQ. Other parts value
+        taste, and other parts charisma. Where there wasn't much of a choice before, individuals and groups are paralyzed for
+        choice today. Choosing for good environments and <i>building</i> good environments requires perspicacity and spotting the right things. 
+    </p>
+
+    <p>
+        We often fail while trying to address problems at a high level; while trying to cull the emergent consequences of scaling
+        certain primitives we'd prefer not to have in the first place. But by doing so, we're cutting weeds rather than digging up
+        the roots. We forget, for example, to ask this question for things that <u><a href="https://x.com/nickcammarata/status/1825569610822996365" id="quote">matter the most to us.</a></u>
+    </p>
+
+    <p>
+        Here's a funny little story from writer Paul Coelho:
+    </p>
+
+    <blockquote>
+        <p>There was once a businessman who was sitting by the beach in a small Brazilian village. As he sat, he saw a Brazilian fisherman rowing a small boat towards the shore having caught quite few big fish.</p>
+    
+        <p>The businessman was impressed and asked the fisherman, “How long does it take you to catch so many fish?” The fisherman replied, “Oh, just a short while.”</p>
+        
+        <p>“Then why don’t you stay longer at sea and catch even more?”</p>
+        
+        <p>“This is enough to feed my whole family,” the fisherman said.
+        The businessman then asked, “So, what do you do for the rest of the day?”</p>
+        
+        <p>“Well, I usually wake up early in the morning, go out to sea and catch a few fish, then go back and play with my kids.
+        In the afternoon, I take a nap with my wife, and evening comes, I join my buddies in the village for a drink — we play guitar,
+        sing and dance throughout the night.”</p>
+        
+        <p>The businessman offered a suggestion. “I am a PhD in business management. I could help you to become a more successful person.
+            From now on, you should spend more time at sea and try to catch as many fish as possible. When you have saved enough money, you
+            could buy a bigger boat and catch even more fish. Soon you will be able to afford to buy more boats, set up your own company,
+            your own production plant for canned food and distribution network. By then, you will have moved out of this village and to Sao
+            Paulo, where you can set up HQ to manage your other branches.”</p>
+        
+        <p>The fisherman continues, “And after that?” The businessman laughs heartily, “After that, you can live like a king in your
+            own house, and when the time is right, you can go public and float your shares in the Stock Exchange, and you will be rich.”
+            The fisherman asks, “And after that?”</p>
+        
+        <p>The businessman says, “After that, you can finally retire, you can move to a house by the fishing village, wake up early
+            in the morning, catch a few fish, then return home to play with kids, have a nice afternoon nap with your wife, and when
+            evening comes, you can join your buddies for a drink, play the guitar, sing and dance throughout the night!”</p>
+    </blockquote>
+
+    <p>
+        And here's another, not so funny story, on <u><a href="https://brief.bismarckanalysis.com/p/the-decay-of-boeing" id="quote">The Decay of Boeing,</a></u>
+        and a <u><a href="https://x.com/mmjukic/status/1825919774586552736" id="quote">related thread </a></u>on the tragedy of leadership with the wrong primitives.
+    </p>
+
+    <p>
+        And more recently, in a <u><a href="https://www.youtube.com/watch?v=Bc9jFbxrkMk" id="quote">talk</a></u> by Rory Sutherland:
+    </p>
+
+    <blockquote>
+        <p>"Why does that question never get asked? Because it's an open-ended question. And business people, governments,
+            politicians aren't looking to solve problems, they're looking to win arguments. And the way you win an argument
+            is you pretend that what should be an open-ended question with many possible right answers (make it enjoyable, have
+            free booze on the train, put Wi-Fi on the train, have a ball pit on the train for kids) - those are multiple and
+            involve subjective decision-making and human judgement. You can't win an argument with those. So what you do is
+            pretend this is a high-school maths problem with a single right answer, you solve for the right answer using
+            high-school maths, and then nobody can argue with you because apparently you haven't made a decision, you've
+            simply <i>'followed the data'.</i></p>
+        <p>This is a massive problem in decision-making: we close down the solution space of any problem in order to arrive
+            at a single right answer which is difficult to argue with. It's a huge creative opportunity cost."</p>
+    </blockquote>
+
+    <p>
+        Jensen Huang has made a <u><a href="https://youtu.be/8Pfa8kPjUio?si=6zAlyKgnFaxzwlFt" id="quote">similar point,</a></u>
+        advocating for using "words" and arguments, instead of numbers (which are obviously valuable,
+        but can also be chosen to suit any agenda, avoid real question-asking/problem-solving, and conjure up dangerous mirages).
+    </p>
+
+    <p>
+        Part of the reason why 'following the data' is so convincing is that it's highly
+        <u><a href="https://www.ribbonfarm.com/2010/07/26/a-big-little-idea-called-legibility/" id="quote">legible.</a></u> Other answers are not so legible
+        or easy to explain and understand because the underlying problem space isn't either. There are decisions we make many
+        times each day when sensemaking about our surroundings, and tools we use to reduce the complexity in that decision-making.
+        But those tools often fail us because they are reductive.
+    </p>
+
+    <p>
+        Measuring others based on status hides the fact, for example, that often status is a rapidly deprecating good, always in flux,
+        and those currently with low or high status may be in a very different place in the future. Filtering others based on qualifications
+        hides the fact, for example, that past success is a poor predictor for future success in dynamic work environments. Relying on these
+        signals is <i>easy</i> - because it makes sensemaking easy - but there may be significant trade-offs in accuracy. On the other hand:
+        uncovering primitives is legible, simple, relatively easy (where it's possible and meaningful to do so), and—maybe a better heuristic
+        for approximating the journey of a complex system.
+    </p>
+
+    <p>
+        Here's a trivial example to tie this altogether: several people I admire speak to the virtue of reading books. But "read books" never
+        worked for me, and I doubt if it's really helped anyone. Over the last couple years I've maintained a reading habit - I now benefit
+        from its fruits, and agree with those who made the suggestion. But "read books" did not give me the activation energy to start or the
+        discipline to keep going. There were a bunch of false starts when I was reading <i>to read</i>. Instead, when I worked on cultivating
+        curiosity, I slowly started reading more. And because I was more curious, I started listening to podcasts, asking better questions,
+        reading papers, listening to interviews and lectures, etc. So cultivating the right primitive did a lot more for me than starting a
+        reading habit. I think this holds for "learn to code", "meditate", "write more", etc. I hear these a lot. They're right, but unhelpful
+        - because they affirm the consequent rather than explaining an effective method for producing it. Whereas, where effort is taken to
+        cultivate the right primitives, the consequent behaviour
+        <u><a href="https://www.livingneighborhoods.org/ht-0/whatisanunfolding.htm" id="quote">unfolds</a></u> naturally.
+    </p>
+
+    <p>
+        The point is: I think we can trace complexity back to its roots more often, and get useful signals for perception, planning and
+        decision-making in the process. As mentioned at the top, there are limits to this. But sometimes I feel the question begging to be
+        asked. And oftentimes, it helps.
+    </p>
+
+    <p>
+        "What are the primitives here?"
+    </p>
 
     </div>
 
