@@ -185,11 +185,10 @@ body.dark-mode .nav-btn:hover {
     height: 28px;
     margin-top: 10px;
     padding-left: 7px;
-    filter: invert(1);
 }
 
 body.dark-mode .social-icon {
-    filter: invert(0.1);
+    filter: invert(1);
     transition: filter 0.2s;
 }
 
