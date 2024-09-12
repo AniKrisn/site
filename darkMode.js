@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const isEssaysPage = window.location.pathname.endsWith("primitives.html");
+    const isPhotoPage = window.location.pathname.endsWith("photo.html");
     const darkModeToggle = document.createElement('button');
 
     darkModeToggle.id = 'darkModeToggle';
@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let velocityX = 0, velocityY = 0;
 
     function setInitialPosition() {
-        if (isEssaysPage) {
+        if (isPhotoPage) {
             darkModeToggle.style.position = 'fixed';
-            darkModeToggle.style.bottom = "10px";
-            darkModeToggle.style.right = "10px";
+            darkModeToggle.style.bottom = "20px";
+            darkModeToggle.style.right = "20px";
         } else {
 
             if (!sessionStorage.getItem('darkModeButtonInitialized')) {
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('mousemove', (e) => {
-        if (isEssaysPage) return;
+        if (isPhotoPage) return;
         if (!isDragging) return;
         
         const newRight = window.innerWidth - (e.clientX - startX) - darkModeToggle.offsetWidth;
