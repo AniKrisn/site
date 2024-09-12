@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     darkModeToggle.id = 'darkModeToggle';
     darkModeToggle.className = 'circle-button';
     darkModeToggle.setAttribute('aria-label', 'Toggle Dark Mode');
-    
+
     document.body.appendChild(darkModeToggle);
 
     // Set initial position
@@ -17,24 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
             darkModeToggle.style.position = 'fixed';
             darkModeToggle.style.bottom = "10px";
             darkModeToggle.style.right = "10px";
-        }
-        
-        else {
+        } else {
 
             if (!sessionStorage.getItem('darkModeButtonInitialized')) {
-                const padding = 0.15; // 15% padding
+                const padding = 0.15;
                 const right = window.innerWidth * padding;
                 const bottom = window.innerHeight * padding;
                 
                 darkModeToggle.style.right = right + 'px';
                 darkModeToggle.style.bottom = bottom + 'px';
 
-                // Mark as initialized
-                localStorage.setItem('darkModeButtonInitialized', 'true');
-                
-                // Clear any existing velocity
+                sessionStorage.setItem('darkModeButtonInitialized', 'true');
+
+                // reset all localStorage values upon loading the page
                 localStorage.removeItem('darkModeButtonVelocityX');
                 localStorage.removeItem('darkModeButtonVelocityY');
+                localStorage.removeItem('darkModeButtonRight');
+                localStorage.removeItem('darkModeButtonBottom');
+                localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+                localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+
             } else {
                 // Use saved position from localStorage if available
                 const savedRight = localStorage.getItem('darkModeButtonRight');
@@ -88,12 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         darkModeToggle.style.right = Math.max(0, Math.min(newRight, window.innerWidth - darkModeToggle.offsetWidth)) + 'px';
         darkModeToggle.style.bottom = Math.max(0, Math.min(newBottom, window.innerHeight - darkModeToggle.offsetHeight)) + 'px';
-
-        // Check if the button enters the goal area
-        if (newRight >= goalArea.x && newBottom >= goalArea.y && newBottom <= goalArea.y + goalArea.height) {
-            // Button entered the goal area, trigger confetti falling
-            triggerConfetti();
-        }
 
         velocityX = e.clientX - lastX;
         velocityY = e.clientY - lastY;
