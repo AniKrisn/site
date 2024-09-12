@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+
     const isEssaysPage = window.location.pathname.endsWith("primitives.html");
     const darkModeToggle = document.createElement('button');
+
     darkModeToggle.id = 'darkModeToggle';
     darkModeToggle.className = 'circle-button';
     darkModeToggle.setAttribute('aria-label', 'Toggle Dark Mode');
-
-    // Append the button to the body
+    
     document.body.appendChild(darkModeToggle);
 
     // Set initial position
@@ -29,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 darkModeToggle.style.bottom = bottom + 'px';
 
                 // Mark as initialized
-                sessionStorage.setItem('darkModeButtonInitialized', 'true');
+                localStorage.setItem('darkModeButtonInitialized', 'true');
                 
                 // Clear any existing velocity
                 localStorage.removeItem('darkModeButtonVelocityX');
@@ -77,14 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelAnimationFrame(animationId);
         e.preventDefault(); // Prevent text selection
     });
-
-    // Add a goal area on the right side of the screen
-    const goalArea = {
-        x: window.innerWidth - 100, // Adjust the position as needed
-        y: 100, // Adjust the position as needed
-        width: 100,
-        height: window.innerHeight - 200 // Adjust the height as needed
-    };
 
     document.addEventListener('mousemove', (e) => {
         if (isEssaysPage) return;
@@ -205,9 +198,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1600); 
     });
 
-    // Function to trigger confetti falling when the button enters the goal area
-    function triggerConfetti() {
-        // Add your confetti falling logic here
-        // You can use libraries like confetti-js for this purpose
-    }
 });
