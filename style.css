@@ -8,6 +8,9 @@ html {
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none;  /* For Internet Explorer and Edge */
     scroll-behavior: smooth;
+    position: relative;
+    margin: 0;
+    padding: 0;
 }
 html::-webkit-scrollbar {
     display: none; /* For Chrome, Safari, and Opera */
@@ -22,6 +25,26 @@ body {
     padding-top: 10%;
     padding-left: 20%;
     transition: background-color 0.3s, color 0.3s;
+    position: relative;
+}
+
+/*
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200vh;
+    background-image: url('assets/concrete_texture.jpg');
+    background-size: cover;
+    opacity: 4%; 
+    z-index: -1; 
+}
+*/
+
+body.dark-mode::before {
+    opacity: 1%; 
 }
 
 #essay {
