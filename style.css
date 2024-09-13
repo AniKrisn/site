@@ -226,6 +226,7 @@ body.dark-mode .nav-btn:hover {
     background-color: rgb(92, 31, 31);
 }
 
+/*
 .close-btn {
     position: fixed;
     top: 20px;
@@ -247,7 +248,7 @@ body.dark-mode .nav-btn:hover {
     background-color: #baffd801;
     transition: 0.2s;
 }
-
+*/
 body.dark-mode .close-btn:hover {
     background-color: #2f2f2f;
     transition: 0.2s;
@@ -336,10 +337,11 @@ body.dark-mode .social-icon:hover {
         padding-right: 2%;
     }
 
-    .close-btn,
-    #darkModeToggle {  
+    /*
+    .close-btn,{  
         display: none;
     }
+    */
 }
 
 

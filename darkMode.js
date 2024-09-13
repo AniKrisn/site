@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const isPhotoPage = window.location.pathname.endsWith("photo.html");
     const darkModeToggle = document.createElement('button');
 
     darkModeToggle.id = 'darkModeToggle';
@@ -187,8 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1600); 
     });
 
-    // Remove on mobile
-    if (window.innerWidth <= 800) {
+    // Remove on mobile and only on photos page
+    if (window.innerWidth <= 1000 && isPhotoPage) {
         const darkModeToggle = document.getElementById('darkModeToggle');
         if (darkModeToggle) darkModeToggle.remove();
         return;
