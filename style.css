@@ -59,6 +59,7 @@ body {
     flex-grow: 1;
     height: 100vh;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent; /* Add this line */
 }
 
 #prev-btn {
@@ -160,7 +161,7 @@ body.dark-mode #quote:hover {
     border: none;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s, opacity 0.3s;
+    transition: background-color 0.3s;
 }
 
 body .circle-button:hover {
@@ -283,18 +284,13 @@ body.dark-mode .social-icon:hover {
         position: relative;
     }
 
-    #photo {
-        max-width: 95vw;
-        max-height: 90vh;
-        object-fit: contain;
-    }
-
     .nav-area {
         position: absolute;
         top: 0;
         bottom: 0;
         width: 50%;
         height: 100%;
+        -webkit-tap-highlight-color: transparent; /* Add this line */
     }
 
     #prev-btn {
@@ -338,6 +334,11 @@ body.dark-mode .social-icon:hover {
     #essay {
         padding-left: 2%;
         padding-right: 2%;
+    }
+
+    .close-btn,
+    #darkModeToggle {  
+        display: none;
     }
 }
 

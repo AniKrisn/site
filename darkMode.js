@@ -194,4 +194,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1600); 
     });
 
+    // Remove on mobile
+    if (window.innerWidth <= 800) {
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) darkModeToggle.remove();
+        return;
+    }
+
 });
