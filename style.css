@@ -140,47 +140,44 @@ body.dark-mode .circle-button:hover {
 
 .photo-page {
     padding-left: 0;
-    padding-top: 15%;
+    padding-top: 0; /* Remove top padding */
+    height: 100vh; /* Ensure full viewport height */
+    overflow: hidden; /* Prevent scrolling */
 }
 
-.photo-album {
+.photo-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 50%;
-    height: 40vh;
-    gap: 20px;
-    margin: 0 auto;
+    height: 100vh;
+    width: 100vw;
 }
 
 #photo {
-    max-width: 35vw;
-    max-height: 80vh;
-    object-fit: cover;
+    max-height: 70vh; /* Reduce max-height to 70% of viewport height */
+    max-width: 70vw; /* Adjust max-width to maintain aspect ratio */
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
-.nav-btn {
-    font-size: 12px;
-    padding: 20% 5%;
-    background-color: rgba(0, 0, 0, 0.082);
-    color: rgba(244, 0, 0, 0);
-    border: none;
+.nav-area {
+    flex-grow: 1;
+    height: 100vh;
     cursor: pointer;
-    transition: background-color 0.3s;
-    width: 50%;
 }
 
-.nav-btn:hover {
-    background-color: #032311ad;
+#prev-btn {
+    order: 1;
 }
 
-body.dark-mode .nav-btn {
-    background-color: #282828;
-    color: black;
+#photo {
+    order: 2;
+    flex-shrink: 0;
 }
 
-body.dark-mode .nav-btn:hover {
-    background-color: rgb(92, 31, 31);
+#next-btn {
+    order: 3;
 }
 
 .close-btn {
@@ -250,13 +247,13 @@ body.dark-mode .social-icon:hover {
     }
 
     .photo-page {
-        padding-top: 30%;
+        padding-top: 0; /* Remove top padding for mobile */
     }
 
     #photo {
-        max-width: 80vw;
-        max-height: 60vh;
-        object-fit: fill;
+        max-width: 90vw; /* Slightly larger on mobile for better visibility */
+        max-height: 70vh; /* Keep the 70% height on mobile */
+        object-fit: contain;
     }
 
     .social-icon {
