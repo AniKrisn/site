@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const isPhotoPage = window.location.pathname.endsWith("photo.html");
     const darkModeToggle = document.createElement('button');
 
     darkModeToggle.id = 'darkModeToggle';
@@ -13,50 +12,45 @@ document.addEventListener('DOMContentLoaded', () => {
     let velocityX = 0, velocityY = 0;
 
     function setInitialPosition() {
-        if (isPhotoPage) {
-            darkModeToggle.style.position = 'fixed';
-            darkModeToggle.style.bottom = "20px";
-            darkModeToggle.style.right = "20px";
+
+        if (!sessionStorage.getItem('darkModeButtonInitialized')) {
+            const padding = 0.15;
+            const right = window.innerWidth * padding;
+            const bottom = window.innerHeight * padding;
+            
+            darkModeToggle.style.right = right + 'px';
+            darkModeToggle.style.bottom = bottom + 'px';
+
+            sessionStorage.setItem('darkModeButtonInitialized', 'true');
+
+            // reset all localStorage values upon loading the page
+            localStorage.removeItem('darkModeButtonVelocityX');
+            localStorage.removeItem('darkModeButtonVelocityY');
+            localStorage.removeItem('darkModeButtonRight');
+            localStorage.removeItem('darkModeButtonBottom');
+            localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
+            localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+
         } else {
+            // Use saved position from localStorage if available
+            const savedRight = localStorage.getItem('darkModeButtonRight');
+            const savedBottom = localStorage.getItem('darkModeButtonBottom');
+            
+            if (savedRight && savedBottom) {
+                darkModeToggle.style.right = savedRight;
+                darkModeToggle.style.bottom = savedBottom;
+            }
 
-            if (!sessionStorage.getItem('darkModeButtonInitialized')) {
-                const padding = 0.15;
-                const right = window.innerWidth * padding;
-                const bottom = window.innerHeight * padding;
-                
-                darkModeToggle.style.right = right + 'px';
-                darkModeToggle.style.bottom = bottom + 'px';
+            // Restore velocity
+            velocityX = parseFloat(localStorage.getItem('darkModeButtonVelocityX')) || 0;
+            velocityY = parseFloat(localStorage.getItem('darkModeButtonVelocityY')) || 0;
 
-                sessionStorage.setItem('darkModeButtonInitialized', 'true');
-
-                // reset all localStorage values upon loading the page
-                localStorage.removeItem('darkModeButtonVelocityX');
-                localStorage.removeItem('darkModeButtonVelocityY');
-                localStorage.removeItem('darkModeButtonRight');
-                localStorage.removeItem('darkModeButtonBottom');
-                localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
-                localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
-
-            } else {
-                // Use saved position from localStorage if available
-                const savedRight = localStorage.getItem('darkModeButtonRight');
-                const savedBottom = localStorage.getItem('darkModeButtonBottom');
-                
-                if (savedRight && savedBottom) {
-                    darkModeToggle.style.right = savedRight;
-                    darkModeToggle.style.bottom = savedBottom;
-                }
-
-                // Restore velocity
-                velocityX = parseFloat(localStorage.getItem('darkModeButtonVelocityX')) || 0;
-                velocityY = parseFloat(localStorage.getItem('darkModeButtonVelocityY')) || 0;
-
-                // Apply momentum if there was velocity
-                if (velocityX !== 0 || velocityY !== 0) {
-                    requestAnimationFrame(applyMomentum);
-                }
+            // Apply momentum if there was velocity
+            if (velocityX !== 0 || velocityY !== 0) {
+                requestAnimationFrame(applyMomentum);
             }
         }
+
     }
 
     // Call setInitialPosition after appending the button
@@ -82,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('mousemove', (e) => {
-        if (isPhotoPage) return;
         if (!isDragging) return;
         
         const newRight = window.innerWidth - (e.clientX - startX) - darkModeToggle.offsetWidth;
