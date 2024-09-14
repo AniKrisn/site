@@ -16,6 +16,8 @@
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            ctx.scale(3, 3); 
+            ctx.imageSmoothingEnabled = true;  // Enable anti-aliasing
         }
 
         window.addEventListener('resize', resizeCanvas);
@@ -58,11 +60,22 @@
             );
         }
 
+
+        let lastTime = 0;
+        const fps = 30;
+
         function drawNorthernLights(time) {
             /* ctx.fillStyle = 'rgba(10, 5, 20, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height); */
 
-            const timeScale = time * 0.008;
+            const currentTime = Date.now();
+            if (currentTime - lastTime < 1000 / fps) {
+                requestAnimationFrame(() => drawNorthernLights(time + 1));
+                return;
+            }
+            lastTime = currentTime;
+
+            const timeScale = time * 0.01;
             const moveX = Math.sin(timeScale * 0.5) * canvas.width * 0.2;
             const moveY = Math.cos(timeScale * 0.3) * canvas.height * 0.1;
 
@@ -84,9 +97,9 @@
                         diagonalGradient > irregularShape - 0.1 && 
                         diagonalGradient < irregularShape + 0.1) {
                         const depth = (noiseValue2 - 0.5) * 2;
-                        const hue = (270 + depth * 110 + time * hueIncrement) % 360;
-                        const lightness = 20 + depth * 70;
-                        const alpha = (noiseValue - 0.55) * 2 * 0.05;
+                        const hue = (130 + depth * 30 + time * hueIncrement) % 360;
+                        const lightness = 20 + depth * 10;
+                        const alpha = (noiseValue - 0.55) * 2 * 0.02;
                         ctx.fillStyle = `hsla(${hue}, 100%, ${lightness}%, ${alpha})`;
                         ctx.fillRect(x, y, 3, 3);
                     }
@@ -105,3 +118,4 @@
         setupNorthernLights();
     }
 })();
+
