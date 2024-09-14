@@ -214,13 +214,26 @@ body.dark-mode .social-icon:hover {
     width: 1px;
     background-color: rgba(255, 255, 255, 0.91); /* Updated opacity to 50% */
     animation: moveUpDown 3s infinite ease-in-out, fade 2s infinite alternate; /* Added fade animation */
+    animation: fadeMove 6s ease-in-out infinite;
     z-index: 2;
     /* opacity: 40%; */ /* Removed static opacity */
+    animation-delay: var(--animation-delay, 0s);
 }
 
 @keyframes fade {
     0% { opacity: 0.4; }
     100% { opacity: 1; }
+}
+
+@keyframes fadeMove {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-10%);
+    }
 }
 
 body.dark-mode .line {
