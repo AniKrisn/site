@@ -36,5 +36,17 @@ nextBtn.addEventListener('click', () => {
     updatePhoto();
 });
 
+
+// Also works with arrow keys
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') {
+        currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
+        updatePhoto();
+    } else if (event.key === 'ArrowRight') {
+        currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+        updatePhoto();
+    }
+});
+
 // Initialize with the first photo
 updatePhoto();

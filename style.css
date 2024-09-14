@@ -30,7 +30,6 @@ body {
 
 .photo-page {
     padding-left: 0;
-    padding-top: 0;
     height: 100vh;
     overflow: hidden;
     padding-top: 0 !important;
@@ -180,10 +179,6 @@ body.dark-mode .circle-button {
 
 body.dark-mode .circle-button:hover {
     background-color: #fff7cc;
-}
-
-.photo-page {
-    padding-left: 0;
 }
 
 .photo-album {
