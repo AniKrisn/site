@@ -62,7 +62,7 @@
             /* ctx.fillStyle = 'rgba(10, 5, 20, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height); */
 
-            const timeScale = time * 0.005;
+            const timeScale = time * 0.007;
             const moveX = Math.sin(timeScale * 0.5) * canvas.width * 0.2;
             const moveY = Math.cos(timeScale * 0.3) * canvas.height * 0.1;
 
@@ -80,9 +80,9 @@
                         diagonalGradient > irregularShape - 0.1 && 
                         diagonalGradient < irregularShape + 0.1) {
                         const depth = (noiseValue2 - 0.5) * 2;
-                        const hue = 270 + depth * 20;
-                        const lightness = 20 + depth * 30;
-                        const alpha = (noiseValue - 0.55) * 2 * 0.7;
+                        const hue = 270 + depth * 110;
+                        const lightness = 20 + depth * 70;
+                        const alpha = (noiseValue - 0.55) * 2 * 0.05;
                         ctx.fillStyle = `hsla(${hue}, 100%, ${lightness}%, ${alpha})`;
                         ctx.fillRect(x, y, 3, 3);
                     }
