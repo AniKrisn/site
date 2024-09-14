@@ -218,6 +218,12 @@ body.dark-mode .social-icon:hover {
     z-index: 2;
     /* opacity: 40%; */ /* Removed static opacity */
     animation-delay: var(--animation-delay, 0s);
+    transition: transform 3s ease-in-out;
+    transform-origin: center center;
+}
+
+.line:hover { /* Increase the width to fill the whole screen */
+    transform: scaleY(2) scaleX(5);
 }
 
 @keyframes fade {
