@@ -181,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll makes button invisible
     window.addEventListener('scroll', () => {
         darkModeToggle.style.opacity = '0';
+        darkModeToggle.style.transition = '0.4s'
         
         clearTimeout(scrollTimer);
         scrollTimer = setTimeout(() => {
