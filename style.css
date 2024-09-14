@@ -16,7 +16,6 @@ html::-webkit-scrollbar {
     display: none; /* For Chrome, Safari, and Opera */
 }
 
-
 body {
     font-family: monospace;
     line-height: 1.8;
