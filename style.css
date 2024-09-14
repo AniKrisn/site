@@ -83,6 +83,17 @@ body.dark-mode::before {
     padding-bottom: 12px;
 }
 
+.flashing-cursor {
+    animation: blink 2.3s step-end infinite;
+    margin-left: -10px;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
 .about-text {
     padding-top: 12px;
     padding-left: 8px;

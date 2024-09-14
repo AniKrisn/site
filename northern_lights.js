@@ -62,16 +62,20 @@
             /* ctx.fillStyle = 'rgba(10, 5, 20, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height); */
 
-            const timeScale = time * 0.007;
+            const timeScale = time * 0.008;
             const moveX = Math.sin(timeScale * 0.5) * canvas.width * 0.2;
             const moveY = Math.cos(timeScale * 0.3) * canvas.height * 0.1;
+
+            const fadeFactor = 0.98; // Adjust this value for fade speed
+            const hueIncrement = 0.14; // Slow hue increase
+
 
             for (let x = 0; x < canvas.width; x += 3) {
                 for (let y = 0; y < canvas.height; y += 3) {
                     const noiseX = (x + moveX) * 0.005;
                     const noiseY = (y + moveY) * 0.005;
-                    const noiseValue = (noise(noiseX, noiseY, timeScale) + 1) / 2;
-                    const noiseValue2 = (noise(noiseX * 2, noiseY * 2, timeScale * 1.5) + 1) / 2;
+                    const noiseValue = (noise(noiseX, noiseY, timeScale) + 1) / 2 * fadeFactor;
+                    const noiseValue2 = (noise(noiseX * 2, noiseY * 2, timeScale * 1.5) + 1) / 2 * fadeFactor;
                     
                     const irregularShape = Math.sin(y * 0.02 + noiseValue2 * 5 + timeScale) * 0.2 + 0.5;
                     const diagonalGradient = ((x + moveX) / canvas.width + (y + moveY) / canvas.height) / 2;
@@ -80,7 +84,7 @@
                         diagonalGradient > irregularShape - 0.1 && 
                         diagonalGradient < irregularShape + 0.1) {
                         const depth = (noiseValue2 - 0.5) * 2;
-                        const hue = 270 + depth * 110;
+                        const hue = (270 + depth * 110 + time * hueIncrement) % 360;
                         const lightness = 20 + depth * 70;
                         const alpha = (noiseValue - 0.55) * 2 * 0.05;
                         ctx.fillStyle = `hsla(${hue}, 100%, ${lightness}%, ${alpha})`;
