@@ -41,6 +41,7 @@ function spawnClusters() {
     createLine(70, 50, 50);
 }
 
+
 function handleResize() {
     if (window.innerWidth < 900) {
         container.innerHTML = '';
