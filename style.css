@@ -114,6 +114,27 @@ canvas {
     transform: scaleY(-1) scaleX(-1);
 }
 
+.marker {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #ffffff;
+    display: flex; 
+    flex-direction: row; 
+    justify-content: center; 
+    gap: 5px; 
+}
+
+body.dark-mode .marker {
+    color: #03cdff;
+}
+
+#right-marker {
+    right: 10px;
+    text-align: right;
+}
+
 ol {
     display: flex;
     flex-direction: column;

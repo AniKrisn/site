@@ -18,13 +18,48 @@ const photos = [
 
 let currentPhotoIndex = 0;
 
+
+const leftMarker = document.getElementById('left-marker');
+const rightMarker = document.getElementById('right-marker');
 const photoElement = document.getElementById('photo');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 
+
 function updatePhoto() {
     photoElement.src = photos[currentPhotoIndex];
+    if (window.innerWidth > 800) {
+        updateWideMarkers(currentPhotoIndex);
+    } else {
+        updateTallMarkers(currentPhotoIndex);  
+    }
 }
+
+function updateWideMarkers(photoIndex) {
+    let markerCount = photoIndex + 1; 
+    const cols = 3;  
+
+    let rightMarkers = ['', '', ''];
+
+    for (let i = 0; i < markerCount; i++) {
+        let col = i % cols;
+        rightMarkers[col] += '|<br>';
+    }
+
+    rightMarker.innerHTML = `<div>${rightMarkers[0]}</div><div>${rightMarkers[1]}</div><div>${rightMarkers[2]}</div>`;
+}
+
+function updateTallMarkers(photoIndex) {
+    let markerCount = photoIndex + 1; 
+    let markers = '';
+
+    for (let i = 0; i < markerCount; i++) {
+        markers += '|<br>';
+    }
+
+    rightMarker.innerHTML = markers;
+}
+
 
 prevBtn.addEventListener('click', () => {
     currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
