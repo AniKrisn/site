@@ -99,6 +99,21 @@ body.dark-mode::before {
     padding-left: 8px;
 }
 
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+    margin-left: 8%;
+}
+
+canvas {
+    display: block;
+    transform: scaleY(-1) scaleX(-1);
+}
+
 ol {
     display: flex;
     flex-direction: column;

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const isInfoPage = window.location.pathname.endsWith("info.html");
     const isPhotoPage = window.location.pathname.endsWith("photo.html");
     const darkModeToggle = document.createElement('button');
 
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setInitialPosition() {
 
-        if (!sessionStorage.getItem('darkModeButtonInitialized')) {
+        if (!sessionStorage.getItem('darkModeButtonInitialized') || isInfoPage) {
             const padding = 0.15;
             const right = window.innerWidth * padding;
             const bottom = window.innerHeight * padding;
@@ -31,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('darkModeButtonBottom');
             localStorage.setItem('darkModeButtonRight', darkModeToggle.style.right);
             localStorage.setItem('darkModeButtonBottom', darkModeToggle.style.bottom);
+
+            if (isInfoPage) {
+                darkModeToggle.style.right = '15%';
+                darkModeToggle.style.bottom = '15%';
+            }
 
         } else {
             // Use saved position from localStorage if available
@@ -77,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('mousemove', (e) => {
+        if (isInfoPage) return;
         if (!isDragging) return;
         
         const newRight = window.innerWidth - (e.clientX - startX) - darkModeToggle.offsetWidth;
@@ -195,5 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (darkModeToggle) darkModeToggle.remove();
         return;
     }
+
 
 });
