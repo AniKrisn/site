@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setInitialPosition() {
 
+        // reinitialise for info and photo pages
         if (!sessionStorage.getItem('darkModeButtonInitialized') || isInfoPage) {
             const padding = 0.15;
             const right = window.innerWidth * padding;
@@ -83,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('mousemove', (e) => {
+        // don't allow movement on info page
         if (isInfoPage) return;
         if (!isDragging) return;
         
