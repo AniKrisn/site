@@ -43,7 +43,7 @@ if (window.innerWidth > 1000) {
 
       ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
       ctx.lineTo(canvas.width * 0.2, canvas.height);
-      ctx.lineTo(canvas.width * 0.1, 0);
+      ctx.lineTo(canvas.width * 0.11, 0);
       ctx.closePath();
       ctx.fill();
 
