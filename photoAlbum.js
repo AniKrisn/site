@@ -19,14 +19,13 @@ const photos = [
 let currentPhotoIndex = 0;
 let preloadedImages = [];
 
-
 const leftMarker = document.getElementById('left-marker');
 const rightMarker = document.getElementById('right-marker');
 const photoElement = document.getElementById('photo');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 
-function preloadedImages() {
+function preloadImages() {
     photos.forEach((src, index) => {
         preloadedImages[index] = new Image();
         preloadedImages[index].src = src;
@@ -34,7 +33,7 @@ function preloadedImages() {
 }
 
 function updatePhoto() {
-    photoElement.src = photos[currentPhotoIndex];
+    photoElement.src = preloadedImages[currentPhotoIndex].src;
     if (window.innerWidth > 800) {
         updateWideMarkers(currentPhotoIndex);
     } else {
@@ -77,7 +76,6 @@ nextBtn.addEventListener('click', () => {
     updatePhoto();
 });
 
-// Also works with arrow keys
 document.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowLeft') {
         currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
@@ -88,5 +86,6 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// Initialize with the first photo
+// Preload images and initialize with the first photo
+preloadImages();
 updatePhoto();
