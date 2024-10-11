@@ -17,6 +17,7 @@ const photos = [
 ];
 
 let currentPhotoIndex = 0;
+let preloadedImages = [];
 
 
 const leftMarker = document.getElementById('left-marker');
@@ -25,6 +26,12 @@ const photoElement = document.getElementById('photo');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 
+function preloadedImages() {
+    photos.forEach((src, index) => {
+        preloadedImages[index] = new Image();
+        preloadedImages[index].src = src;
+    });
+}
 
 function updatePhoto() {
     photoElement.src = photos[currentPhotoIndex];
@@ -60,7 +67,6 @@ function updateTallMarkers(photoIndex) {
     rightMarker.innerHTML = markers;
 }
 
-
 prevBtn.addEventListener('click', () => {
     currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
     updatePhoto();
@@ -70,7 +76,6 @@ nextBtn.addEventListener('click', () => {
     currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
     updatePhoto();
 });
-
 
 // Also works with arrow keys
 document.addEventListener('keydown', (event) => {
