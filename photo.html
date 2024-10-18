@@ -16,6 +16,12 @@
         </div>
     </main>
     <script src="photoAlbum.js"></script>
-    <script src="darkMode.js"></script>
+    <script>
+        if (window.innerWidth > 900) { 
+            var script = document.createElement('script');
+            script.src = 'darkMode.js';
+            document.body.appendChild(script);
+        }
+    </script>
 </body>
 </html>
