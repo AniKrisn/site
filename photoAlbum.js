@@ -25,10 +25,19 @@ const photoElement = document.getElementById('photo');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 
-function preloadImages() {
-    photos.forEach((src, index) => {
+function preloadInitial() {
+    const initialImages = [0, 1, 15]; 
+    initialImages.forEach((index) => {
         preloadedImages[index] = new Image();
-        preloadedImages[index].src = src;
+        preloadedImages[index].src = photos[index];
+    });
+}
+
+function preloadOthers() {
+    const remainingImages = [2, 14, 3, 13, 4, 12, 5, 11, 6, 10, 7, 9, 8]; 
+    remainingImages.forEach((index) => {
+        preloadedImages[index] = new Image();
+        preloadedImages[index].src = photos[index];
     });
 }
 
@@ -87,5 +96,6 @@ document.addEventListener('keydown', (event) => {
 });
 
 // Preload images and initialize with the first photo
-preloadImages();
+preloadInitial();
+preloadOthers();
 updatePhoto();
