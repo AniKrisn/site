@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNote</title>
+    <style>
+        ::selection {
+            color: #4A4947;
+            background: #D8D2C2;
+        }
+
+        /* Full-page background styling */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1A3636;
+            font-family: monospace;
+        }
+        /* Other colours
+         #1A3636
+         #16423C */
+
+        /* Notepad box styling */
+        .notepad-container {
+            width: 80%;
+            height: 80%;
+            max-width: 600px;
+            background-color: #fbf7f3;
+            border-radius: 3px;
+            overflow: hidden;
+            padding: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            opacity: 90%;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            background-color: #fbf7f3;
+            border: none;
+            resize: none;
+            font-size: 16px;
+            line-height: 1.5;
+            outline: none;
+            color: #0B192C;
+        }
+
+        .mobile-button-container {
+            position: absolute;
+            bottom: -100px; 
+            left: 50%;
+            transform: translateX(-50%);
+            overflow: hidden; 
+            padding-bottom: 30px;
+        }
+
+        .mobile-nav-button {
+            background-color: #466464; 
+            color: #1A3636;
+            border: none;
+            border-radius: 4px;
+            width: 85px; 
+            height: 50px; 
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+            z-index: 10; 
+        }
+
+        .ctrl-l-text {
+            font-size: 13px; 
+            position: absolute; 
+            top: 10px; 
+            left: 10px; 
+            color: #fbf7f3; 
+        }
+
+        .home-text {
+            font-size: 16px; 
+            position: absolute; 
+            top: 10px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            color: #fbf7f3;
+            text-decoration: none;
+        }
+
+        @media (min-width: 768px) { 
+            .mobile-button-container {
+                display: none; /* Hide on larger screens */
+            }
+        }
+
+        @media (max-width: 768px) { 
+            .ctrl-l-text {
+                display: none; /* Hide on smaller screens */
+            }
+        }
+
+
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.querySelector('textarea');
+
+            // Load saved content from sessionStorage
+            const savedContent = sessionStorage.getItem('textarea');
+            if (savedContent) {
+                textarea.value = savedContent;
+            }
+
+            // Save content to sessionStorage on input
+            textarea.addEventListener('input', () => {
+                sessionStorage.setItem('textarea', textarea.value);
+            });
+
+
+            document.addEventListener('keydown', (event) => {
+                if (event.ctrlKey && event.key === 'l') {
+                    event.preventDefault();
+                    window.location.href = 'QuickNote/quickcode.html';
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="ctrl-l-text">
+        <b>Ctrl + L</b> for Code <br>
+    </div>
+
+    <a href="../index.html" class="home-text">
+        Home
+    </a>
+
+    <div class="notepad-container">
+        <textarea></textarea>
+    </div>
+    
+    <div class="mobile-button-container">
+        <button class="mobile-nav-button" onclick="window.location.href='QuickNote/quickcode.html'">⟵</button>
+    </div>
+
+</body>
+</html>
