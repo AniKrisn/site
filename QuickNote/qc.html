@@ -121,44 +121,44 @@
             .mobile-button-container {
                 display: none; /* Hide on larger screens */
             }
+
+            .lang-button {
+                background-color: #16423C;
+                color: #ffffff;
+                border: none;
+                padding: 8px 12px;
+                margin: 0 4px;
+                border-radius: 3px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background-color 0.2s ease;
+                font-family: monospace;
+            }
+            
+            .lang-button:hover {
+                background-color: #137a6e;
+            }
+
+            .lang-button.active {
+                background-color: #137a6e86;
+            }
+
+            .button-container {
+                position: absolute;
+                bottom: 10px;
+                left: 10px;
+            }
         }
 
         @media (max-width: 768px) { 
             .ctrl-l-text {
                 display: none; /* Hide on smaller screens */
             }
-        }
 
-        /*
-        For language button. Currently disabled
-
-        .lang-button {
-            background-color: #16423C;
-            color: #ffffff;
-            border: none;
-            padding: 8px 12px;
-            margin: 0 4px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s ease;
-            font-family: monospace;
+            .button-container {
+                display: none;
+            }
         }
-        
-        .lang-button:hover {
-            background-color: #137a6e;
-        }
-
-        .lang-button.active {
-            background-color: #137a6e86;
-        }
-
-        .button-container {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-        }
-        */
 
     </style>
 </head>
@@ -180,12 +180,20 @@
         <button class="mobile-nav-button" onclick="window.location.href='qn.html'">⊳</button>
     </div>
 
+    <div class="button-container">
+        <button class="lang-button" onclick="changeLanguage('clike', this)">C</button>
+        <button class="lang-button" onclick="changeLanguage('py', this)">Python</button>
+        <button class="lang-button" onclick="changeLanguage('rb', this)">Ruby</button>
+        <button class="lang-button active" onclick="changeLanguage('js', this)">JavaScript</button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
     <script>
         // JavaScript remains exactly the same
         const textarea = document.querySelector('.code-input');
         const highlightedCode = document.querySelector('.highlighted-code code');
         let currentLanguage = 'javascript';
+
 
         function updateHighlighting() {
             highlightedCode.textContent = textarea.value;
@@ -276,6 +284,18 @@
                     window.location.href = 'qn.html';
                 }
             });
+
+        // Change language for Prism highlighting
+        function changeLanguage(language, button) {
+            currentLanguage = language;
+            highlightedCode.className = `language-${language}`; // Update language class
+            Prism.highlightElement(highlightedCode); // Re-run Prism highlighting
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.lang-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to the clicked button
+            button.classList.add('active');
+        }
 
     </script>
 </body>
