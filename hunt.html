@@ -60,10 +60,7 @@
         .tree { background-color: #387478; }
 
         .home-text {
-            font-size: 16px; 
-            position: absolute; 
-            top: 10px; 
-            left: 50%; 
+            font-size: 18px;
             transform: translateX(-50%);
             color: #fbf7f3;
             text-decoration: none;
@@ -105,7 +102,7 @@
             color: #fab12f;
             background-color: #222;
         }
-
+        
         .pickup {
             color: #00FF9C;
             font-size: 30px;
@@ -114,22 +111,20 @@
     </style>
 </head>
 <body>
-    <a href="index.html" class="home-text">Home</a>
-    <div class="center-wrapper">
+        <div class="center-wrapper">
+            <div class="controls">
+                <button class="pause">❚❚</button>
+                <button class="restart">⟳</button>
+            </div>
 
-        <div class="controls">
-            <button class="pause">❚❚</button>
-            <button class="restart">⟳</button>
+            <div class="game-wrapper">
+                <div id="game-container"></div>
+            </div>
+            
+            <div class="timer-bar-container">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
         </div>
-
-        <div class="game-wrapper">
-            <div id="game-container"></div>
-        </div>
-        
-        <div class="timer-bar-container">
-            <div class="timer-bar" id="timer-bar"></div>
-        </div>
-    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script>
