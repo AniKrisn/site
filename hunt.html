@@ -386,20 +386,20 @@
 
             // Check if the new tile has a pickup item
             const tile = document.getElementById(`tile-${newX}-${newY}`);
-            
+
             if (tile && tile.classList.contains('pickup')) {
             tile.classList.remove('pickup');
             tile.textContent = '';
             
             if (reverseTimeEffect) {
                 // If already reversing, add to pending time and extend duration
-                pendingReverseTime += 6000;  // 6000 because of 2x speed for 3 seconds
-                reverseEffectEndTime += 3000;  // Extend the effect duration
+                pendingReverseTime += 2000;  // 6000 because of 2x speed for 3 seconds
+                reverseEffectEndTime += 1000;  // Extend the effect duration
             } else {
                 // Starting a new reverse effect
                 reverseTimeEffect = true;
                 lastReverseStartTime = Date.now();
-                reverseEffectEndTime = Date.now() + 3000;
+                reverseEffectEndTime = Date.now() + 1000;
                 pendingReverseTime = 0;
             }
         }
@@ -449,7 +449,7 @@
         }
 
         /* TIMER */
-        const timerDuration = 15000;
+        const timerDuration = 10000;
         const timerBar = document.getElementById('timer-bar');
         let startTime = Date.now();
         let elapsedPaused = 0;
@@ -497,8 +497,8 @@
             timerBar.style.height = `${heightPercent}%`;
 
             // Flashlight intensity based on remaining time
-            if (remaining < 10000) flashlightIntensity = flashlightConfigs.medium;
-            if (remaining < 7000) flashlightIntensity = flashlightConfigs.low;
+            if (remaining < 8000) flashlightIntensity = flashlightConfigs.medium;
+            if (remaining < 5000) flashlightIntensity = flashlightConfigs.low;
             if (remaining < 3000) flashlightIntensity = flashlightConfigs.verylow;
             if (remaining < 1000) flashlightIntensity = flashlightConfigs.off;
 
@@ -508,7 +508,9 @@
                 alert("..You didn't make it out alive..");
                 window.location.reload();
             }
-        }
+
+            updateFlashlight();
+        }   
 
         const timerInterval = setInterval(() => {
             if (!paused) updateTimer();
