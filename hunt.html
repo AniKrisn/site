@@ -74,7 +74,8 @@
         let currentZone = { x: 0, y: 0 };
         let lastMoveTime = 0;
         let keyStates = {};
-        let zones = new Map(); // Store all generated zones
+        let zones = new Map();
+        let flashlight = true;
 
         function getPlayerSymbol() {
             switch (playerDirection) {
@@ -161,6 +162,7 @@
         playerTile.textContent = getPlayerSymbol();  
     }
 
+    if (!flashlight) return;
     for (let y = 0; y < gridSize; y++) {
         for (let x = 0; x < gridSize; x++) {    
             const tile = document.getElementById(`tile-${x}-${y}`); 
@@ -170,10 +172,13 @@
             if (tile) {
                 if (distance === 0) {
                     tile.style.color = '#fab12f';
-                } else if (distance === 1) {
+                }
+                
+                if (distance === 1) {
                     tile.style.color = '#faf6e325';
-                    tile.style.opacity = 1;
-                } else if (distance === 2) {
+                } 
+                
+                if (distance === 2) {
                     tile.style.color = '#faf6e311';
                     tile.style.opacity = 0.6;
                 }
@@ -197,14 +202,46 @@
         function changeZone(dx, dy) {
             currentZone.x += dx;
             currentZone.y += dy;
-            
-            // Adjust player position to opposite side of new zone
+
+            // Move player to the opposite side in the new zone
             if (dx > 0) playerPosition.x = 0;
             if (dx < 0) playerPosition.x = gridSize - 1;
             if (dy > 0) playerPosition.y = 0;
             if (dy < 0) playerPosition.y = gridSize - 1;
 
+            // Ensure the destination tile and surrounding tiles are grass in the new zone
+            ensureGrassTiles(playerPosition.x, playerPosition.y);
+
             initializeGrid();
+        }
+
+        // Ensure target tile and surrounding tiles are grass
+        function ensureGrassTiles(targetX, targetY) {
+            let gridData = getZone(currentZone.x, currentZone.y);
+            if (!gridData) {
+                gridData = generateZoneGrid(currentZone.x, currentZone.y);
+                saveZone(currentZone.x, currentZone.y, gridData);
+            }
+
+            // Define the range of tiles around the target position to set as grass
+            const range = 1;
+            for (let dy = -range; dy <= range; dy++) {
+                for (let dx = -range; dx <= range; dx++) {
+                    const x = targetX + dx;
+                    const y = targetY + dy;
+                    const index = y * gridSize + x;
+                    
+                    // Check bounds and set tile to grass if it's within the grid
+                    if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                        if (gridData[index] !== 'grass') {
+                            gridData[index] = 'grass';
+                        }
+                    }
+                }
+            }
+
+            // Update the saved zone with the modified grid data
+            saveZone(currentZone.x, currentZone.y, gridData);
         }
 
         function movePlayer(dx, dy) {
