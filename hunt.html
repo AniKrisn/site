@@ -246,8 +246,6 @@
                     tile.style.fontSize = '30px';
                 }
             }
-            console.log("Grass tiles available:", grassTiles.length);
-            console.log("Pickup placed at:", x, y);
         }
 
 
@@ -269,7 +267,6 @@
                 gameContainer.appendChild(tile);
             });
 
-            spawnPickup();
             updatePlayerPosition();
         }
         
@@ -310,6 +307,11 @@
 
         // Function to apply flashlight effect based on configuration and distance
         function applyFlashlightEffect(tile, distance) {
+            if (tile.classList.contains('pickup')) {
+                tile.style.opacity = 1;
+                return;
+            }
+
             for (const config of flashlightIntensity) {
                 if (distance === config.distance) {
                     tile.style.color = config.color || ''; // Apply color if defined
@@ -340,6 +342,7 @@
             ensureGrassTiles(playerPosition.x, playerPosition.y);
 
             initializeGrid();
+            spawnPickup();
         }
 
         // Ensure target tile and surrounding tiles are grass
@@ -380,6 +383,18 @@
 
             const newX = playerPosition.x + dx;
             const newY = playerPosition.y + dy;
+
+            // Check if the new tile has a pickup item
+            const tile = document.getElementById(`tile-${newX}-${newY}`);
+            if (tile && tile.classList.contains('pickup')) {
+                tile.classList.remove('pickup');
+                tile.textContent = ''; // Clear the pickup symbol
+
+                // Activate reverse time effect for 3 seconds
+                reverseTimeEffect = true;
+                reverseEffectEndTime = Date.now() + 3000; // End 3 seconds from now
+            }
+
 
             if (dx === 1) playerDirection = 'right';
             if (dx === -1) playerDirection = 'left';
@@ -445,16 +460,26 @@
         });
 
         function updateTimer() {
-            // Calculate elapsed time excluding paused time
             let elapsed = Date.now() - startTime - elapsedPaused;
-            let remaining = timerDuration - elapsed;
+            let remaining;
+
+            // If the reverse effect is active, add time instead of subtracting
+            if (reverseTimeEffect) {
+                remaining = timerDuration + (Date.now() - startTime - elapsedPaused);
+                
+                // Check if the reverse effect duration has ended
+                if (Date.now() > reverseEffectEndTime) {
+                    reverseTimeEffect = false; // Deactivate the effect
+                }
+            } else {
+                remaining = timerDuration - elapsed;
+            }
 
             // Update the timer bar
             const heightPercent = Math.max((remaining / timerDuration) * 100, 0);
             timerBar.style.height = `${heightPercent}%`;
 
-            // Change flashlight intensity based on remaining time
-            /*
+            // Flashlight intensity based on remaining time
             if (remaining < 10000) flashlightIntensity = flashlightConfigs.medium;
             if (remaining < 7000) flashlightIntensity = flashlightConfigs.low;
             if (remaining < 3000) flashlightIntensity = flashlightConfigs.verylow;
@@ -466,10 +491,8 @@
                 alert("..You didn't make it out alive..");
                 window.location.reload();
             }
-            */
         }
 
-        flashlightIntensity = flashlightConfigs.test;
 
         const timerInterval = setInterval(() => {
             if (!paused) updateTimer();
@@ -478,6 +501,8 @@
         function setup() {
             noiseSeed(Math.random() * 1000);
             initializeGrid();
+            // spawn pickup separately with a slight delay
+            setTimeout(spawnPickup, 10);
             checkMovement();
         }
 
