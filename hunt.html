@@ -61,17 +61,17 @@
             top: 10px;
             right: 20px;
             width: 20px;
-            height: 200px; /* Full height for the bar */
-            background-color: #444; /* Background behind the timer bar */
+            height: 200px;
+            background-color: #444;
             border: 1px solid #222;
         }
 
         .timer-bar {
             width: 100%;
-            height: 100%;
+            height: 100%;            
             background-color: #fab12f;
             transition: height 0.1s linear;
-            transform-origin: bottom;
+            transform-origin: top;
         }   
 
         .pause {
@@ -106,7 +106,7 @@
         const noiseScale = 0.2;
         const moveDelay = 125; 
 
-        let playerPosition = { x: 0, y: 0 };
+        let playerPosition = { x: 5, y: 5 };
         let playerDirection = 'right';
         let currentZone = { x: 0, y: 0 };
         let lastMoveTime = 0;
@@ -114,14 +114,13 @@
         let zones = new Map();
         let paused = false;
 
-        pauseButton.addEventListener("click", () => {
-            paused = !paused;
-            pauseButton.textContent = paused ? "▶" : "❚❚"; // Change icon based on state
-        });
-
         // Flashlight configurations
-        /* ADD THE TRAIL BACK */
         const flashlightConfigs = {
+            verylow: [
+                { distance: 0, color: '#fab12f', opacity: 0.6 },
+                { distance: 1, color: '#faf6e325', opacity: 0.3 },
+                { distance: 2, color: '#faf6e311', opacity: 0 },
+            ],
             low: [
                 { distance: 0, color: '#fab12f', opacity: 1 },
                 { distance: 1, color: '#faf6e325', opacity: 0.8 },
@@ -236,16 +235,21 @@
             if (playerTile) {
                 playerTile.classList.add('player');
                 playerTile.textContent = getPlayerSymbol();
-            }
-            
-            if (paused) return;
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = 0; x < gridSize; x++) {
-                    const tile = document.getElementById(`tile-${x}-${y}`);
-                    const distance = Math.abs(playerPosition.x - x) + Math.abs(playerPosition.y - y);
 
-                    if (tile) {
-                        applyFlashlightEffect(tile, distance);
+                updateFlashlight();
+            }
+        }
+
+        function updateFlashlight() {
+            if (!paused) {
+                    for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        const tile = document.getElementById(`tile-${x}-${y}`);
+                        const distance = Math.abs(playerPosition.x - x) + Math.abs(playerPosition.y - y);
+
+                        if (tile) {
+                            applyFlashlightEffect(tile, distance);
+                        }
                     }
                 }
             }
@@ -367,34 +371,52 @@
             requestAnimationFrame(checkMovement);
         }
 
-        // Timer setup
-        const timerDuration = 10000; // 60 seconds in milliseconds
+        /* TIMER */
+        const timerDuration = 15000;
         const timerBar = document.getElementById('timer-bar');
         let startTime = Date.now();
+        let elapsedPaused = 0;
+        let pauseStartTime = 0;
+
+        pauseButton.addEventListener("click", () => {
+            paused = !paused;
+            pauseButton.textContent = paused ? "▶" : "❚❚";
+
+            if (paused) {
+                // Store when the game was paused
+                pauseStartTime = Date.now();
+            } else {
+                // Add the pause duration to elapsedPaused
+                elapsedPaused += Date.now() - pauseStartTime;
+            }
+        });
 
         function updateTimer() {
-            if (paused) return;
+            // Calculate elapsed time excluding paused time
+            let elapsed = Date.now() - startTime - elapsedPaused;
+            let remaining = timerDuration - elapsed;
 
-            const elapsed = Date.now() - startTime;
-            const remaining = timerDuration - elapsed;
-            
-            // Calculate the height percentage based on remaining time
+            // Update the timer bar
             const heightPercent = Math.max((remaining / timerDuration) * 100, 0);
             timerBar.style.height = `${heightPercent}%`;
+
+            // Change flashlight intensity based on remaining time
+            if (remaining < 10000) flashlightIntensity = flashlightConfigs.medium;
+            if (remaining < 7000) flashlightIntensity = flashlightConfigs.low;
+            if (remaining < 3000) flashlightIntensity = flashlightConfigs.verylow;
+            if (remaining < 1000) flashlightIntensity = flashlightConfigs.off;
 
             // Stop the timer if time has elapsed
             if (remaining <= 0) {
                 clearInterval(timerInterval);
-                // Optional: Add any action to take when the timer runs out
                 alert("..You didn't make it out alive..");
+                window.location.reload();
             }
-
-            if (remaining < 6000) {flashlightIntensity = flashlightConfigs.medium;}
-            if (remaining < 4000) {flashlightIntensity = flashlightConfigs.low;}
-            if (remaining < 1000) {flashlightIntensity = flashlightConfigs.off;}
         }
 
-        const timerInterval = setInterval(updateTimer, 1000);
+        const timerInterval = setInterval(() => {
+            if (!paused) updateTimer();
+        }, 1000);
 
         function setup() {
             noiseSeed(Math.random() * 1000);
