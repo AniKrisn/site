@@ -386,14 +386,23 @@
 
             // Check if the new tile has a pickup item
             const tile = document.getElementById(`tile-${newX}-${newY}`);
+            
             if (tile && tile.classList.contains('pickup')) {
-                tile.classList.remove('pickup');
-                tile.textContent = ''; // Clear the pickup symbol
-
-                // Activate reverse time effect for 3 seconds
+            tile.classList.remove('pickup');
+            tile.textContent = '';
+            
+            if (reverseTimeEffect) {
+                // If already reversing, add to pending time and extend duration
+                pendingReverseTime += 6000;  // 6000 because of 2x speed for 3 seconds
+                reverseEffectEndTime += 3000;  // Extend the effect duration
+            } else {
+                // Starting a new reverse effect
                 reverseTimeEffect = true;
-                reverseEffectEndTime = Date.now() + 3000; // End 3 seconds from now
+                lastReverseStartTime = Date.now();
+                reverseEffectEndTime = Date.now() + 3000;
+                pendingReverseTime = 0;
             }
+        }
 
 
             if (dx === 1) playerDirection = 'right';
@@ -445,6 +454,9 @@
         let startTime = Date.now();
         let elapsedPaused = 0;
         let pauseStartTime = 0;
+        // for stacking pickups:
+        let pendingReverseTime = 0;  // Track total pending reverse time
+        let lastReverseStartTime = 0;  // Track when the last reverse effect started
 
         pauseButton.addEventListener("click", () => {
             paused = !paused;
@@ -463,13 +475,18 @@
             let elapsed = Date.now() - startTime - elapsedPaused;
             let remaining;
 
-            // If the reverse effect is active, add time instead of subtracting
             if (reverseTimeEffect) {
-                remaining = timerDuration + (Date.now() - startTime - elapsedPaused);
+                // Calculate reverse time at 2x speed since last reverse start
+                let reverseElapsed = (Date.now() - lastReverseStartTime) * 2;
+                // Add this elapsed time plus any pending time to what was remaining
+                remaining = Math.min((timerDuration - elapsed) + reverseElapsed + pendingReverseTime, timerDuration);
                 
-                // Check if the reverse effect duration has ended
                 if (Date.now() > reverseEffectEndTime) {
-                    reverseTimeEffect = false; // Deactivate the effect
+                    reverseTimeEffect = false;
+                    pendingReverseTime = 0;  // Clear pending time
+                    // When effect ends, adjust startTime to preserve the gained time
+                    startTime = Date.now() - (timerDuration - remaining);
+                    elapsedPaused = 0;
                 }
             } else {
                 remaining = timerDuration - elapsed;
@@ -492,7 +509,6 @@
                 window.location.reload();
             }
         }
-
 
         const timerInterval = setInterval(() => {
             if (!paused) updateTimer();
