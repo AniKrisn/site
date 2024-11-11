@@ -72,7 +72,7 @@
             background-color: #fab12f;
             transition: height 0.1s linear;
             transform-origin: bottom;
-        }
+        }   
 
         .pause {
             position: absolute;
@@ -102,6 +102,7 @@
     <script>
         const gridSize = 10;
         const gameContainer = document.getElementById('game-container');
+        const pauseButton = document.querySelector(".pause");
         const noiseScale = 0.2;
         const moveDelay = 125; 
 
@@ -113,9 +114,10 @@
         let zones = new Map();
         let paused = false;
 
-        function pause() {
-            document.querySelector(".pause").addEventListener("click", function () { alert("Button Clicked"); });
-        }
+        pauseButton.addEventListener("click", () => {
+            paused = !paused;
+            pauseButton.textContent = paused ? "▶" : "❚❚"; // Change icon based on state
+        });
 
         // Flashlight configurations
         /* ADD THE TRAIL BACK */
@@ -355,10 +357,12 @@
 
         // Continuous movement check
         function checkMovement() {
-            if (keyStates['ArrowUp'] || keyStates['w'] || keyStates['W']) movePlayer(0, -1);
-            if (keyStates['ArrowDown'] || keyStates['s'] || keyStates['S']) movePlayer(0, 1);
-            if (keyStates['ArrowLeft'] || keyStates['a'] || keyStates['A']) movePlayer(-1, 0);
-            if (keyStates['ArrowRight'] || keyStates['d'] || keyStates['D']) movePlayer(1, 0);
+            if (!paused) {
+                if (keyStates['ArrowUp'] || keyStates['w'] || keyStates['W']) movePlayer(0, -1);
+                if (keyStates['ArrowDown'] || keyStates['s'] || keyStates['S']) movePlayer(0, 1);
+                if (keyStates['ArrowLeft'] || keyStates['a'] || keyStates['A']) movePlayer(-1, 0);
+                if (keyStates['ArrowRight'] || keyStates['d'] || keyStates['D']) movePlayer(1, 0);
+            }      
             
             requestAnimationFrame(checkMovement);
         }
@@ -369,6 +373,8 @@
         let startTime = Date.now();
 
         function updateTimer() {
+            if (paused) return;
+
             const elapsed = Date.now() - startTime;
             const remaining = timerDuration - elapsed;
             
@@ -393,7 +399,7 @@
         function setup() {
             noiseSeed(Math.random() * 1000);
             initializeGrid();
-            checkMovement(); // Start the movement loop
+            checkMovement();
         }
 
         setup();
