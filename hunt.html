@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hunt</title>
+    <style>
+        body { 
+            margin: 0; 
+            background-color: #222;
+            overflow: hidden;
+            font-family: monospace;
+        }
+        .center-wrapper {
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh;
+        }
+        #game-container { 
+            display: grid; 
+            grid-template-columns: repeat(10, 40px); 
+            gap: 2px;
+            background-color: #241f19;
+            padding: 2px;
+            width: fit-content;
+            height: fit-content;
+        }
+        .tile { 
+            width: 40px; 
+            height: 40px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            box-sizing: border-box;
+            color: #faf6e33d;
+        }
+        .player { 
+            background-color: #fab12f;
+            color: #fab12f;
+            outline: 2px solid #fab12f;
+            outline-offset: -2px;
+        }
+        .grass { background-color: #20283d; }
+        .water { background-color: #982b1c; }
+        .tree { background-color: #387478; }
+        
+        .home-text {
+            font-size: 16px; 
+            position: absolute; 
+            top: 10px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            color: #fbf7f3;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-text">Home</a>
+    <div class="center-wrapper">
+        <div id="game-container"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script>
+        const gridSize = 10;
+        const gameContainer = document.getElementById('game-container');
+        const noiseScale = 0.2;
+        const moveDelay = 125; 
+
+        let playerPosition = { x: 0, y: 0 };
+        let playerDirection = 'right';
+        let currentZone = { x: 0, y: 0 };
+        let lastMoveTime = 0;
+        let keyStates = {};
+        let zones = new Map(); // Store all generated zones
+
+        function getPlayerSymbol() {
+            switch (playerDirection) {
+                case 'up':
+                    return '⮝';
+                case 'down':
+                    return '⮟';
+                case 'left':
+                    return '⮜';
+                case 'right':
+                default:
+                    return '⮞';
+            }
+        }
+
+        // Generate a unique key for each zone
+        function getZoneKey(x, y) {
+            return `${x},${y}`;
+        }
+
+        // Store zone data
+        function saveZone(zoneX, zoneY, gridData) {
+            const key = getZoneKey(zoneX, zoneY);
+            zones.set(key, gridData);
+        }
+
+        // Get zone data if it exists
+        function getZone(zoneX, zoneY) {
+            const key = getZoneKey(zoneX, zoneY);
+            return zones.get(key);
+        }
+
+        // Generate grid data for a zone
+        function generateZoneGrid(zoneX, zoneY) {
+            const gridData = [];
+            const zoneOffset = noise(zoneX, zoneY) * 1000; // Use zone coordinates to affect noise
+
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    const noiseValue = noise((x + zoneX * gridSize) * noiseScale, 
+                                          (y + zoneY * gridSize) * noiseScale + zoneOffset);
+                    let tileType;
+                    if (noiseValue < 0.3) tileType = 'water';
+                    else if (noiseValue < 0.6) tileType = 'grass';
+                    else tileType = 'tree';
+                    gridData.push(tileType);
+                }
+            }
+            return gridData;
+        }
+
+        // Initialize or load a zone
+        function initializeGrid() {
+            gameContainer.innerHTML = ''; // Clear current grid
+            
+            let gridData = getZone(currentZone.x, currentZone.y);
+            if (!gridData) {
+                gridData = generateZoneGrid(currentZone.x, currentZone.y);
+                saveZone(currentZone.x, currentZone.y, gridData);
+            }
+
+            gridData.forEach((tileType, index) => {
+                const x = index % gridSize;
+                const y = Math.floor(index / gridSize);
+                const tile = document.createElement('div');
+                tile.classList.add('tile', tileType);
+                tile.id = `tile-${x}-${y}`;
+                gameContainer.appendChild(tile);
+            });
+            
+            updatePlayerPosition();
+        }
+        
+        function getTileType(x, y) {
+            const tile = document.getElementById(`tile-${x}-${y}`);
+            return tile ? tile.classList.contains('grass') : false;
+        }
+        function updatePlayerPosition() {
+    document.querySelectorAll('.player').forEach(tile => tile.classList.remove('player'));
+    const playerTile = document.getElementById(`tile-${playerPosition.x}-${playerPosition.y}`);
+
+    if (playerTile) { 
+        playerTile.classList.add('player');
+        playerTile.textContent = getPlayerSymbol();  
+    }
+
+    for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {    
+            const tile = document.getElementById(`tile-${x}-${y}`); 
+            let distance = Math.abs(playerPosition.x - x) + Math.abs(playerPosition.y - y);
+
+            /* Flashlight-effect */
+            if (tile) {
+                if (distance === 0) {
+                    tile.style.color = '#fab12f';
+                } else if (distance === 1) {
+                    tile.style.color = '#faf6e325';
+                    tile.style.opacity = 1;
+                } else if (distance === 2) {
+                    tile.style.color = '#faf6e311';
+                    tile.style.opacity = 0.6;
+                }
+                
+                if (distance > 2) {
+                    tile.style.opacity = 0.2;   
+                    tile.textContent = "";
+                }
+                if (distance > 3 ) {
+                    tile.textContent = "";
+                    tile.style.opacity = 0.05;
+                }
+                if (distance > 5) {
+                    tile.style.opacity = 0;
+                }
+            }
+        }
+    }
+}
+
+        function changeZone(dx, dy) {
+            currentZone.x += dx;
+            currentZone.y += dy;
+            
+            // Adjust player position to opposite side of new zone
+            if (dx > 0) playerPosition.x = 0;
+            if (dx < 0) playerPosition.x = gridSize - 1;
+            if (dy > 0) playerPosition.y = 0;
+            if (dy < 0) playerPosition.y = gridSize - 1;
+
+            initializeGrid();
+        }
+
+        function movePlayer(dx, dy) {
+            const currentTime = Date.now();
+            if (currentTime - lastMoveTime < moveDelay) return;
+
+            const newX = playerPosition.x + dx;
+            const newY = playerPosition.y + dy;
+
+            if (dx === 1) playerDirection = 'right';
+            if (dx === -1) playerDirection = 'left';
+            if (dy === 1) playerDirection = 'down';
+            if (dy === -1) playerDirection = 'up';
+
+            if (newX >= gridSize) {
+                if (getTileType(gridSize - 1, playerPosition.y)) changeZone(1, 0);
+            } else if (newX < 0) {
+                if (getTileType(0, playerPosition.y)) changeZone(-1, 0);
+            } else if (newY >= gridSize) {
+                if (getTileType(playerPosition.x, gridSize - 1)) changeZone(0, 1);
+            } else if (newY < 0) {
+                if (getTileType(playerPosition.x, 0)) changeZone(0, -1);
+            } else if (getTileType(newX, newY)) {
+                playerPosition.x = newX;
+                playerPosition.y = newY;
+                updatePlayerPosition();
+            }
+            
+            lastMoveTime = currentTime;
+        }
+
+        // Handle keydown and keyup events
+        document.addEventListener('keydown', (event) => {
+            keyStates[event.key] = true;
+        });
+
+        document.addEventListener('keyup', (event) => {
+            keyStates[event.key] = false;
+        });
+
+        // Continuous movement check
+        function checkMovement() {
+            if (keyStates['ArrowUp'] || keyStates['w'] || keyStates['W']) movePlayer(0, -1);
+            if (keyStates['ArrowDown'] || keyStates['s'] || keyStates['S']) movePlayer(0, 1);
+            if (keyStates['ArrowLeft'] || keyStates['a'] || keyStates['A']) movePlayer(-1, 0);
+            if (keyStates['ArrowRight'] || keyStates['d'] || keyStates['D']) movePlayer(1, 0);
+            
+            requestAnimationFrame(checkMovement);
+        }
+
+        function setup() {
+            noiseSeed(Math.random() * 1000);
+            initializeGrid();
+            checkMovement(); // Start the movement loop
+        }
+
+        setup();
+    </script>
+</body>
+</html>
