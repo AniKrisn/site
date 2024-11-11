@@ -75,7 +75,38 @@
         let lastMoveTime = 0;
         let keyStates = {};
         let zones = new Map();
-        let flashlight = true;
+
+        // Flashlight configurations
+        const flashlightConfigs = {
+            low: [
+                { distance: 0, color: '#fab12f', opacity: 1 },
+                { distance: 1, color: '#faf6e325', opacity: 0.8 },
+                { distance: 2, color: '#faf6e311', opacity: 0.4 },
+                { distance: 3, color: '', opacity: 0.1, clearText: true },
+                { distance: 5, color: '', opacity: 0 }
+            ],
+            medium: [
+                { distance: 0, color: '#fab12f', opacity: 1 },
+                { distance: 1, color: '#faf6e325', opacity: 1 },
+                { distance: 2, color: '#faf6e311', opacity: 0.6 },
+                { distance: 3, color: '', opacity: 0.2, clearText: true },
+                { distance: 5, color: '', opacity: 0 }
+            ],
+            high: [
+                { distance: 0, color: '#fab12f', opacity: 1 },
+                { distance: 1, color: '#faf6e325', opacity: 1 },
+                { distance: 2, color: '#faf6e311', opacity: 0.8 },
+                { distance: 3, color: '', opacity: 0.5, clearText: true },
+                { distance: 6, color: '', opacity: 0 }
+            ],
+            off: [
+                { distance: 0, color: '', opacity: 0 }
+            ],
+            test: [
+                { distance: 0, color: '#fab12f', opacity: 1 }
+            ]
+        };
+
 
         function getPlayerSymbol() {
             switch (playerDirection) {
@@ -153,51 +184,48 @@
             const tile = document.getElementById(`tile-${x}-${y}`);
             return tile ? tile.classList.contains('grass') : false;
         }
+
         function updatePlayerPosition() {
-    document.querySelectorAll('.player').forEach(tile => tile.classList.remove('player'));
-    const playerTile = document.getElementById(`tile-${playerPosition.x}-${playerPosition.y}`);
+            document.querySelectorAll('.player').forEach(tile => tile.classList.remove('player'));
+            const playerTile = document.getElementById(`tile-${playerPosition.x}-${playerPosition.y}`);
 
-    if (playerTile) { 
-        playerTile.classList.add('player');
-        playerTile.textContent = getPlayerSymbol();  
-    }
+            if (playerTile) {
+                playerTile.classList.add('player');
+                playerTile.textContent = getPlayerSymbol();
+            }
 
-    if (!flashlight) return;
-    for (let y = 0; y < gridSize; y++) {
-        for (let x = 0; x < gridSize; x++) {    
-            const tile = document.getElementById(`tile-${x}-${y}`); 
-            let distance = Math.abs(playerPosition.x - x) + Math.abs(playerPosition.y - y);
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    const tile = document.getElementById(`tile-${x}-${y}`);
+                    const distance = Math.abs(playerPosition.x - x) + Math.abs(playerPosition.y - y);
 
-            /* Flashlight-effect */
-            if (tile) {
-                if (distance === 0) {
-                    tile.style.color = '#fab12f';
-                }
-                
-                if (distance === 1) {
-                    tile.style.color = '#faf6e325';
-                } 
-                
-                if (distance === 2) {
-                    tile.style.color = '#faf6e311';
-                    tile.style.opacity = 0.6;
-                }
-                
-                if (distance > 2) {
-                    tile.style.opacity = 0.2;   
-                    tile.textContent = "";
-                }
-                if (distance > 3 ) {
-                    tile.textContent = "";
-                    tile.style.opacity = 0.05;
-                }
-                if (distance > 5) {
-                    tile.style.opacity = 0;
+                    if (tile) {
+                        applyFlashlightEffect(tile, distance);
+                    }
                 }
             }
         }
-    }
-}
+
+        let flashlightIntensity = flashlightConfigs.low;
+
+
+        // Function to apply flashlight effect based on configuration and distance
+        function applyFlashlightEffect(tile, distance) {
+            for (const config of flashlightIntensity) {
+                if (distance === config.distance) {
+                    tile.style.color = config.color || ''; // Apply color if defined
+                    tile.style.opacity = config.opacity;
+
+                    if (config.clearText) {
+                        tile.textContent = '';
+                    }
+                    return;
+                } else if (distance > config.distance) {
+                    tile.style.opacity = config.opacity;
+                    tile.textContent = '';
+                }
+            }
+        }
 
         function changeZone(dx, dy) {
             currentZone.x += dx;
