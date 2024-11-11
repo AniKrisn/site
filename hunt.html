@@ -17,6 +17,7 @@
             align-items: center; 
             height: 100vh;
         }
+
         #game-container { 
             display: grid; 
             grid-template-columns: repeat(10, 40px); 
@@ -54,6 +55,35 @@
             color: #fbf7f3;
             text-decoration: none;
         }
+
+        .timer-bar-container {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            width: 20px;
+            height: 200px; /* Full height for the bar */
+            background-color: #444; /* Background behind the timer bar */
+            border: 1px solid #222;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 100%;
+            background-color: #fab12f;
+            transition: height 0.1s linear;
+            transform-origin: bottom;
+        }
+
+        .pause {
+            position: absolute;
+            top: 20px;
+            right: 60px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: #fab12f;
+            background-color: #222;
+        }
     </style>
 </head>
 <body>
@@ -61,6 +91,12 @@
     <div class="center-wrapper">
         <div id="game-container"></div>
     </div>
+
+    <div class="timer-bar-container">
+        <div class="timer-bar" id="timer-bar"></div>
+    </div>
+
+    <button class="pause">❚❚</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script>
@@ -75,8 +111,14 @@
         let lastMoveTime = 0;
         let keyStates = {};
         let zones = new Map();
+        let paused = false;
+
+        function pause() {
+            document.querySelector(".pause").addEventListener("click", function () { alert("Button Clicked"); });
+        }
 
         // Flashlight configurations
+        /* ADD THE TRAIL BACK */
         const flashlightConfigs = {
             low: [
                 { distance: 0, color: '#fab12f', opacity: 1 },
@@ -193,7 +235,8 @@
                 playerTile.classList.add('player');
                 playerTile.textContent = getPlayerSymbol();
             }
-
+            
+            if (paused) return;
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
                     const tile = document.getElementById(`tile-${x}-${y}`);
@@ -206,7 +249,7 @@
             }
         }
 
-        let flashlightIntensity = flashlightConfigs.low;
+        let flashlightIntensity = flashlightConfigs.high;
 
 
         // Function to apply flashlight effect based on configuration and distance
@@ -319,6 +362,33 @@
             
             requestAnimationFrame(checkMovement);
         }
+
+        // Timer setup
+        const timerDuration = 10000; // 60 seconds in milliseconds
+        const timerBar = document.getElementById('timer-bar');
+        let startTime = Date.now();
+
+        function updateTimer() {
+            const elapsed = Date.now() - startTime;
+            const remaining = timerDuration - elapsed;
+            
+            // Calculate the height percentage based on remaining time
+            const heightPercent = Math.max((remaining / timerDuration) * 100, 0);
+            timerBar.style.height = `${heightPercent}%`;
+
+            // Stop the timer if time has elapsed
+            if (remaining <= 0) {
+                clearInterval(timerInterval);
+                // Optional: Add any action to take when the timer runs out
+                alert("..You didn't make it out alive..");
+            }
+
+            if (remaining < 6000) {flashlightIntensity = flashlightConfigs.medium;}
+            if (remaining < 4000) {flashlightIntensity = flashlightConfigs.low;}
+            if (remaining < 1000) {flashlightIntensity = flashlightConfigs.off;}
+        }
+
+        const timerInterval = setInterval(updateTimer, 1000);
 
         function setup() {
             noiseSeed(Math.random() * 1000);
