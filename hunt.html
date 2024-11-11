@@ -220,7 +220,37 @@
             return gridData;
         }
         
-        // Initialize or load a zone
+        function spawnPickup() {
+            const gridData = getZone(currentZone.x, currentZone.y);
+            if (!gridData) return;
+
+            // Find all grass tiles
+            const grassTiles = [];
+            gridData.forEach((tileType, index) => {
+                if (tileType === 'grass') {
+                    grassTiles.push(index);
+                }
+            });
+
+            // Select a random grass tile for the pickup
+            if (grassTiles.length > 0) {
+                const pickupIndex = grassTiles[Math.floor(Math.random() * grassTiles.length)];
+                const x = pickupIndex % gridSize;
+                const y = Math.floor(pickupIndex / gridSize);
+
+                const tile = document.getElementById(`tile-${x}-${y}`);
+                if (tile) {
+                    tile.classList.add('pickup');
+                    tile.textContent = '☘︎';
+                    tile.style.color = '#00FF9C';
+                    tile.style.fontSize = '30px';
+                }
+            }
+            console.log("Grass tiles available:", grassTiles.length);
+            console.log("Pickup placed at:", x, y);
+        }
+
+
         function initializeGrid() {
             gameContainer.innerHTML = ''; // Clear current grid
             
@@ -238,7 +268,8 @@
                 tile.id = `tile-${x}-${y}`;
                 gameContainer.appendChild(tile);
             });
-            
+
+            spawnPickup();
             updatePlayerPosition();
         }
         
@@ -340,6 +371,9 @@
             saveZone(currentZone.x, currentZone.y, gridData);
         }
 
+        let reverseTimeEffect = false;
+        let reverseEffectEndTime = 0;   
+
         function movePlayer(dx, dy) {
             const currentTime = Date.now();
             if (currentTime - lastMoveTime < moveDelay) return;
@@ -420,6 +454,7 @@
             timerBar.style.height = `${heightPercent}%`;
 
             // Change flashlight intensity based on remaining time
+            /*
             if (remaining < 10000) flashlightIntensity = flashlightConfigs.medium;
             if (remaining < 7000) flashlightIntensity = flashlightConfigs.low;
             if (remaining < 3000) flashlightIntensity = flashlightConfigs.verylow;
@@ -431,7 +466,10 @@
                 alert("..You didn't make it out alive..");
                 window.location.reload();
             }
+            */
         }
+
+        flashlightIntensity = flashlightConfigs.test;
 
         const timerInterval = setInterval(() => {
             if (!paused) updateTimer();
