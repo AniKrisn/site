@@ -110,10 +110,19 @@
             z-index: 2;
         }
 
+        #direction-indicator {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: #fab12f;
+        }
+
     </style>
 </head>
 <body>
         <div class="center-wrapper">
+            <div id="direction-indicator"></div> 
             <div class="controls">
                 <button class="pause">❚❚</button>
                 <button class="restart">⟳</button>
@@ -141,7 +150,8 @@
         let lastAiUpdateTime = 0;
         const aiUpdateDelay = 100;
         let gameOver = false; 
-
+        const startingZone = { x: 0, y: 0 };
+        let extractionZone = { x: 0, y: 0 };
 
         let playerPosition = { x: 4, y: 4 };
         let playerDirection = 'right';
@@ -150,6 +160,7 @@
         let keyStates = {};
         let zones = new Map();
         let paused = false;
+
 
         // Flashlight configurations
         const flashlightConfigs = {
@@ -242,6 +253,16 @@
             }
             return gridData;
         }
+
+        // Ensure extraction zone is at least 10 zones away
+        function generateExtractionZone() {
+            while (Math.abs(extractionZone.x - startingZone.x) + Math.abs(extractionZone.y - startingZone.y) < 10) {
+                extractionZone.x = Math.floor(Math.random() * 20) - 10; // Random zone around starting zone
+                extractionZone.y = Math.floor(Math.random() * 20) - 10;
+            }
+        }
+
+        generateExtractionZone();
         
         function spawnPickup() {
             const gridData = getZone(currentZone.x, currentZone.y);
@@ -289,6 +310,18 @@
                 tile.id = `tile-${x}-${y}`;
                 gameContainer.appendChild(tile);
             });
+
+                // Spawn extraction door in extraction zone
+            if (currentZone.x === extractionZone.x && currentZone.y === extractionZone.y) {
+                const doorX = Math.floor(Math.random() * gridSize);
+                const doorY = Math.floor(Math.random() * gridSize);
+                const extractionTile = document.getElementById(`tile-${doorX}-${doorY}`);
+                
+                if (extractionTile) {
+                    extractionTile.classList.add('extraction-door');
+                    extractionTile.textContent = '🚪';
+                }
+            }
 
             updatePlayerPosition();
         }
@@ -409,7 +442,6 @@
         }
 
         function changeZone(dx, dy) {
-
             currentZone.x += dx;
             currentZone.y += dy;
 
@@ -419,9 +451,9 @@
             if (dy > 0) playerPosition.y = 0;
             if (dy < 0) playerPosition.y = gridSize - 1;
 
-            // Ensure the destination tile and surrounding tiles are grass in the new zone
-            ensureGrassTiles(playerPosition.x, playerPosition.y);
-
+            
+            ensureGrassTiles(playerPosition.x, playerPosition.y); // Ensure the destination tile and surrounding tiles are grass in the new zone
+            updateDirectionIndicator();
             initializeGrid();
             spawnPickup();
         }
@@ -504,6 +536,16 @@
                 playerPosition.y = newY;
                 updatePlayerPosition();
             }
+
+            // Check if player is on the extraction door
+            if (
+                currentZone.x === extractionZone.x &&
+                currentZone.y === extractionZone.y &&
+                tile && tile.classList.contains('extraction-door')
+            ) {
+                alert("Congratulations! You've escaped!");
+                window.location.reload();
+            }
             
             lastMoveTime = currentTime;
         }
@@ -554,6 +596,25 @@
                 elapsedPaused += Date.now() - pauseStartTime;
             }
         });
+
+        function getDirectionToExtraction() {
+            const dx = extractionZone.x - currentZone.x;
+            const dy = extractionZone.y - currentZone.y;
+
+            let direction = '';
+            if (dy < 0) direction += '↑'; // Extraction zone is north
+            else if (dy > 0) direction += '↓'; // Extraction zone is south
+
+            if (dx < 0) direction += '←'; // Extraction zone is west
+            else if (dx > 0) direction += '→'; // Extraction zone is east
+
+            return direction || 'You are in the extraction zone!';
+        }
+
+        function updateDirectionIndicator() {
+            const indicator = document.getElementById('direction-indicator');
+            indicator.textContent = getDirectionToExtraction();
+        }
 
         function updateTimer() {
             let elapsed = Date.now() - startTime - elapsedPaused;
