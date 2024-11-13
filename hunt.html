@@ -110,11 +110,25 @@
             z-index: 2;
         }
 
+        .extraction-door::after {
+            content: '🗝';
+            font-size: 40px;
+            line-height: 40px;
+            opacity: 1 !important;
+            color: #81f5ff !important;
+            z-index: 2;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         #direction-indicator {
             position: fixed;
             top: 10px;
-            left: 10px;
-            font-size: 24px;
+            left: 50%; 
+            transform: translateX(-50%); 
+            font-size: 56px;
             color: #fab12f;
         }
 
@@ -145,7 +159,7 @@
         const restartButton = document.querySelector(".restart");
         const noiseScale = 0.2;
         const moveDelay = 125; 
-        const aiSpeed = 0.11; 
+        const aiSpeed = 0.04; 
         let aiPosition = { x: 9, y: 9 };
         let lastAiUpdateTime = 0;
         const aiUpdateDelay = 100;
@@ -254,11 +268,11 @@
             return gridData;
         }
 
-        // Ensure extraction zone is at least 10 zones away
+        // Ensure extraction zone is at least 7 zones away
         function generateExtractionZone() {
-            while (Math.abs(extractionZone.x - startingZone.x) + Math.abs(extractionZone.y - startingZone.y) < 10) {
-                extractionZone.x = Math.floor(Math.random() * 20) - 10; // Random zone around starting zone
-                extractionZone.y = Math.floor(Math.random() * 20) - 10;
+            while (Math.abs(extractionZone.x - startingZone.x) + Math.abs(extractionZone.y - startingZone.y) < 7) {
+                extractionZone.x = Math.floor(Math.random() * 20) - 7; // Random zone around starting zone
+                extractionZone.y = Math.floor(Math.random() * 20) - 7;
             }
         }
 
@@ -319,7 +333,6 @@
                 
                 if (extractionTile) {
                     extractionTile.classList.add('extraction-door');
-                    extractionTile.textContent = '🚪';
                 }
             }
 
@@ -543,7 +556,7 @@
                 currentZone.y === extractionZone.y &&
                 tile && tile.classList.contains('extraction-door')
             ) {
-                alert("Congratulations! You've escaped!");
+                alert("you did it.. you managed to escape!");
                 window.location.reload();
             }
             
@@ -575,7 +588,7 @@
 
 
         /* TIMER */
-        const timerDuration = 12000;
+        const timerDuration = 13000;
         const timerBar = document.getElementById('timer-bar');
         let startTime = Date.now();
         let elapsedPaused = 0;
@@ -602,11 +615,11 @@
             const dy = extractionZone.y - currentZone.y;
 
             let direction = '';
-            if (dy < 0) direction += '↑'; // Extraction zone is north
-            else if (dy > 0) direction += '↓'; // Extraction zone is south
+            if (dy < 0) direction += '↑';
+            else if (dy > 0) direction += '↓';
 
-            if (dx < 0) direction += '←'; // Extraction zone is west
-            else if (dx > 0) direction += '→'; // Extraction zone is east
+            if (dx < 0) direction += '←';
+            else if (dx > 0) direction += '→';
 
             return direction || 'You are in the extraction zone!';
         }
@@ -642,10 +655,10 @@
             timerBar.style.height = `${heightPercent}%`;
 
             // Flashlight intensity based on remaining time
-            if (remaining < 8000) flashlightIntensity = flashlightConfigs.medium;
-            if (remaining < 5000) flashlightIntensity = flashlightConfigs.low;
+            if (remaining < 10000) flashlightIntensity = flashlightConfigs.medium;
+            if (remaining < 7000) flashlightIntensity = flashlightConfigs.low;
             if (remaining < 3000) flashlightIntensity = flashlightConfigs.verylow;
-            if (remaining < 1000) flashlightIntensity = flashlightConfigs.off;
+            if (remaining < 1100) flashlightIntensity = flashlightConfigs.off;
 
             // Stop the timer if time has elapsed
             if (remaining <= 0) {
