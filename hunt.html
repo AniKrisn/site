@@ -98,7 +98,16 @@
         
         .pickup {
             color: #00FF9C;
-            font-size: 30px;
+            font-size: 40px;
+        }
+
+        .ai-chaser {
+            color: #ff4444 !important;
+            font-size: 46px !important;
+            text-align: center;
+            line-height: 40px;
+            opacity: 1 !important;
+            z-index: 2;
         }
 
     </style>
@@ -127,8 +136,14 @@
         const restartButton = document.querySelector(".restart");
         const noiseScale = 0.2;
         const moveDelay = 125; 
+        const aiSpeed = 0.11; 
+        let aiPosition = { x: 9, y: 9 };
+        let lastAiUpdateTime = 0;
+        const aiUpdateDelay = 100;
+        let gameOver = false; 
 
-        let playerPosition = { x: 5, y: 5 };
+
+        let playerPosition = { x: 4, y: 4 };
         let playerDirection = 'right';
         let currentZone = { x: 0, y: 0 };
         let lastMoveTime = 0;
@@ -249,7 +264,7 @@
                 const tile = document.getElementById(`tile-${x}-${y}`);
                 if (tile) {
                     tile.classList.add('pickup');
-                    tile.textContent = '☘︎';
+                    tile.textContent = '🕯';
                     //tile.style.color = '#00FF9C';
                     //tile.style.fontSize = '30px';
                 }
@@ -295,6 +310,63 @@
             }
         }
 
+        
+        function updateAI() {
+            if (gameOver || paused) return;
+
+            const currentTime = Date.now();
+            if (currentTime - lastAiUpdateTime < aiUpdateDelay || paused) return;
+
+            // Calculate direction to player
+            const dx = playerPosition.x - aiPosition.x;
+            const dy = playerPosition.y - aiPosition.y;
+            
+            // Move AI towards player
+            if (Math.abs(dx) > 0.1) {
+                aiPosition.x += Math.sign(dx) * aiSpeed;
+            }
+            if (Math.abs(dy) > 0.1) {
+                aiPosition.y += Math.sign(dy) * aiSpeed;
+            }
+
+            // Check for collision with player
+            const distance = Math.sqrt(
+                Math.pow(playerPosition.x - aiPosition.x, 2) + 
+                Math.pow(playerPosition.y - aiPosition.y, 2)
+            );
+            
+            if (distance < 1 && !gameOver) {
+                gameOver = true;
+                alert("..the shadow caught you..");
+                window.location.reload(); // This will only execute after alert is dismissed
+            }
+
+            // Update AI visual position
+            updateAIPosition();
+            lastAiUpdateTime = currentTime;
+        }
+
+        function updateAIPosition() {
+            // Remove old AI position
+            document.querySelectorAll('.ai-chaser').forEach(tile => {
+                tile.classList.remove('ai-chaser');
+                if (!tile.classList.contains('player')) {
+                    tile.textContent = '';
+                }
+            });
+
+            // Calculate grid position
+            const gridX = Math.floor(aiPosition.x);
+            const gridY = Math.floor(aiPosition.y);
+            
+            const aiTile = document.getElementById(`tile-${gridX}-${gridY}`);
+            if (aiTile && !aiTile.classList.contains('player')) {
+                aiTile.classList.add('ai-chaser');
+                aiTile.textContent = '𓃶';
+            }
+        }
+        
+
         function updateFlashlight() {
             if (!paused) {
                     for (let y = 0; y < gridSize; y++) {
@@ -337,6 +409,7 @@
         }
 
         function changeZone(dx, dy) {
+
             currentZone.x += dx;
             currentZone.y += dy;
 
@@ -446,18 +519,21 @@
 
         // Continuous movement check
         function checkMovement() {
-            if (!paused) {
+            if (!paused && !gameOver) {
                 if (keyStates['ArrowUp'] || keyStates['w'] || keyStates['W']) movePlayer(0, -1);
                 if (keyStates['ArrowDown'] || keyStates['s'] || keyStates['S']) movePlayer(0, 1);
                 if (keyStates['ArrowLeft'] || keyStates['a'] || keyStates['A']) movePlayer(-1, 0);
                 if (keyStates['ArrowRight'] || keyStates['d'] || keyStates['D']) movePlayer(1, 0);
+
+                updateAI();
             }      
-            
+
             requestAnimationFrame(checkMovement);
         }
 
+
         /* TIMER */
-        const timerDuration = 10000;
+        const timerDuration = 12000;
         const timerBar = document.getElementById('timer-bar');
         let startTime = Date.now();
         let elapsedPaused = 0;
@@ -530,6 +606,7 @@
             // spawn pickup separately with a slight delay
             setTimeout(spawnPickup, 10);
             checkMovement();
+            //aiPosition = {x:9, y:9};
         }
 
         setup();
