@@ -131,6 +131,9 @@
             font-size: 56px;
             color: #fab12f;
         }
+        #direction-indicator:is(:contains("extraction")) {
+            font-size: 36px; 
+        }
 
     </style>
 </head>
@@ -159,7 +162,7 @@
         const restartButton = document.querySelector(".restart");
         const noiseScale = 0.2;
         const moveDelay = 125; 
-        const aiSpeed = 0.04; 
+        const aiSpeed = 0.05; 
         let aiPosition = { x: 9, y: 9 };
         let lastAiUpdateTime = 0;
         const aiUpdateDelay = 100;
@@ -268,11 +271,11 @@
             return gridData;
         }
 
-        // Ensure extraction zone is at least 7 zones away
+        // Ensure extraction zone is at least 5 zones away
         function generateExtractionZone() {
-            while (Math.abs(extractionZone.x - startingZone.x) + Math.abs(extractionZone.y - startingZone.y) < 7) {
-                extractionZone.x = Math.floor(Math.random() * 20) - 7; // Random zone around starting zone
-                extractionZone.y = Math.floor(Math.random() * 20) - 7;
+            while (Math.abs(extractionZone.x - startingZone.x) + Math.abs(extractionZone.y - startingZone.y) < 5) {
+                extractionZone.x = Math.floor(Math.random() * 20) - 5; // Random zone around starting zone
+                extractionZone.y = Math.floor(Math.random() * 20) - 5;
             }
         }
 
@@ -306,9 +309,33 @@
             }
         }
 
+        function spawnExtractionDoor() {
+            const gridData = getZone(currentZone.x, currentZone.y);
+            if (!gridData) return;
+
+            // Find all grass tiles
+            const grassTiles = [];
+            gridData.forEach((tileType, index) => {
+                if (tileType === 'grass') {
+                    grassTiles.push(index);
+                }
+            });
+
+            // Only spawn the door if there are grass tiles available
+            if (grassTiles.length > 0) {
+                const doorIndex = grassTiles[Math.floor(Math.random() * grassTiles.length)];
+                const x = doorIndex % gridSize;
+                const y = Math.floor(doorIndex / gridSize);
+                
+                const extractionTile = document.getElementById(`tile-${x}-${y}`);
+                if (extractionTile) {
+                    extractionTile.classList.add('extraction-door');
+                }
+            }
+        }
 
         function initializeGrid() {
-            gameContainer.innerHTML = ''; // Clear current grid
+            gameContainer.innerHTML = '';
             
             let gridData = getZone(currentZone.x, currentZone.y);
             if (!gridData) {
@@ -327,13 +354,7 @@
 
                 // Spawn extraction door in extraction zone
             if (currentZone.x === extractionZone.x && currentZone.y === extractionZone.y) {
-                const doorX = Math.floor(Math.random() * gridSize);
-                const doorY = Math.floor(Math.random() * gridSize);
-                const extractionTile = document.getElementById(`tile-${doorX}-${doorY}`);
-                
-                if (extractionTile) {
-                    extractionTile.classList.add('extraction-door');
-                }
+                spawnExtractionDoor();
             }
 
             updatePlayerPosition();
@@ -621,7 +642,7 @@
             if (dx < 0) direction += '←';
             else if (dx > 0) direction += '→';
 
-            return direction || 'You are in the extraction zone!';
+            return direction || 'Find extraction point!';
         }
 
         function updateDirectionIndicator() {
