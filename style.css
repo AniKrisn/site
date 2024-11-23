@@ -28,6 +28,10 @@ body {
     position: relative;
 }
 
+.index-page {
+    overflow: hidden;
+}
+
 .photo-page {
     padding-left: 0;
     height: 100vh;
