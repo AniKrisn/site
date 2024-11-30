@@ -156,6 +156,12 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script>
+
+        // mobile msg
+        if (window.innerWidth < 768) {
+            document.body.innerHTML = '<h1 style="color: white; text-align: center; margin-top: 20%;">please play on pc!</h1>';
+        }
+
         const gridSize = 10;
         const gameContainer = document.getElementById('game-container');
         const pauseButton = document.querySelector(".pause");
