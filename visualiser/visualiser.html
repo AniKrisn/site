@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Low Poly Audio Visualizer</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; }
+        #controls { 
+            position: fixed; 
+            top: 26px; 
+            left: 26px; 
+            z-index: 100;
+            padding: 4px;
+            background: #578E7E;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button {
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            background: #3D3D3D;
+            color: #578E7E;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #525252;
+        }
+        button:disabled {
+            background: #3D3D3D;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button id="playPause" disabled>▶</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, analyser, dataArray;
+        let geometry, material, mesh;
+        let audioElement;
+        let lights = [];
+
+        // Color palette
+        const colors = ['#4793AF', '#FFC470', '#DD5746', '#8B322C', '#D5E7B5', '#72BAA9', '#7E5CAD', '#474E93'].map(color => new THREE.Color(color));
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Create geometry
+            geometry = new THREE.IcosahedronGeometry(1, 3);
+            
+            material = new THREE.MeshPhongMaterial({
+                color: colors[0],
+                flatShading: true,
+                shininess: 50
+            });
+
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            // Store original vertex positions
+            geometry.userData = {
+                originalPositions: geometry.attributes.position.array.slice()
+            };
+
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0x111111);
+            scene.add(ambientLight);
+
+            // Create dynamic lights
+            for (let i = 0; i < 4; i++) {
+                const light = new THREE.PointLight(colors[i], 0.5, 10);
+                light.position.set(
+                    Math.cos(i * Math.PI/2) * 3,
+                    Math.sin(i * Math.PI/2) * 3,
+                    0
+                );
+                lights.push(light);
+                scene.add(light);
+            }
+
+            camera.position.z = 5;
+
+            setupAudio();
+        }
+
+        function getAverageFrequency() {
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i];
+            }
+            return sum / (dataArray.length * 255); // Normalize to 0-1
+        }
+
+        function setupAudio() {
+            const audio = document.createElement('audio');
+            audio.src = 'wt7.wav';
+            audio.style.display = 'none';
+            document.body.appendChild(audio);
+            
+            audioElement = audio;
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaElementSource(audioElement);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 512;
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            document.getElementById('playPause').disabled = false;
+        }
+
+        
+        document.getElementById('playPause').addEventListener('click', function () {
+            if (!audioElement) {
+                const audio = document.createElement('audio');
+                audio.src = 'wt7.wav'; 
+                audio.style.display = 'none';
+                document.body.appendChild(audio);
+
+                audioElement = audio;
+
+                // Initialize AudioContext after user interaction
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaElementSource(audioElement);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 512;
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+            }
+
+            if (audioElement.paused) {
+                fadeIn(audioElement);
+                this.textContent = '❚❚';
+            } else {
+                fadeOut(audioElement);
+                this.textContent = '▶';
+            }
+        });
+
+        function fadeIn(audio) {
+            const fadeDuration = 0.3; // seconds
+            audio.volume = 0;
+            audio.play();
+            let startTime = audio.currentTime;
+            const fadeInterval = setInterval(() => {
+                const elapsedTime = audio.currentTime - startTime;
+                audio.volume = Math.min(elapsedTime / fadeDuration, 1);
+                if (audio.volume === 1) {
+                    clearInterval(fadeInterval);
+                }
+            }, 30);
+        }
+
+        function fadeOut(audio) {
+            const fadeDuration = 0.3; // seconds
+            let startTime = audio.currentTime;
+            const initialVolume = audio.volume;
+            const fadeInterval = setInterval(() => {
+                const elapsedTime = audio.currentTime - startTime;
+                audio.volume = Math.max(initialVolume - (elapsedTime / fadeDuration), 0);
+                if (audio.volume === 0) {
+                    audio.pause();
+                    clearInterval(fadeInterval);
+                }
+            }, 30);
+        }
+
+        let colorIndex = 0;
+        let colorTransitionTime = 0;
+        let time = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+
+            if (analyser && !audioElement.paused) {
+                analyser.getByteFrequencyData(dataArray);
+                const avgFreq = getAverageFrequency();
+                
+                const positions = geometry.attributes.position.array;
+                const originalPositions = geometry.userData.originalPositions;
+
+                // Create various shape-morphing effects
+                for (let i = 0; i < positions.length; i += 3) {
+                    const originalX = originalPositions[i];
+                    const originalY = originalPositions[i + 1];
+                    const originalZ = originalPositions[i + 2];
+
+                    // Calculate distance from center for varying effects
+                    const distanceFromCenter = Math.sqrt(
+                        originalX * originalX + 
+                        originalY * originalY + 
+                        originalZ * originalZ
+                    );
+
+                    // Create different deformation patterns
+                    const angle = Math.atan2(originalY, originalX);
+                    
+                    // Wave pattern that moves around the shape
+                    const wave = Math.sin(angle * 6 + time * 2) * 0.7;
+                    
+                    // Pulsing pattern that creates caves and spikes
+                    const pulse = Math.sin(distanceFromCenter * 5 - time * 3) * 0.9;
+                    
+                    // Spiral pattern
+                    const spiral = Math.sin(angle + distanceFromCenter * 4 + time) * 0.2;
+                    
+                    // Combine patterns and limit maximum deformation
+                    const maxDeformation = 0.7; // Maximum deformation limit
+                    const deformation = Math.max(-maxDeformation, 
+                                              Math.min(maxDeformation, 
+                                                     (wave + pulse + spiral) * avgFreq * 2));
+
+                    // Apply deformation along the normal direction
+                    positions[i] = originalX * (1 + deformation);
+                    positions[i + 1] = originalY * (1 + deformation);
+                    positions[i + 2] = originalZ * (1 + deformation);
+                }
+
+                geometry.attributes.position.needsUpdate = true;
+                geometry.computeVertexNormals();
+
+                // Update dynamic lights
+                lights.forEach((light, i) => {
+                    const angle = time + (i * Math.PI/2);
+                    const radius = 3 + Math.sin(time * 2) * 0.5;
+                    light.position.x = Math.cos(angle) * radius;
+                    light.position.y = Math.sin(angle) * radius;
+                    light.intensity = 0.5 + avgFreq * 0.5 * 8;
+                });
+
+                // Color transitions
+                colorTransitionTime += avgFreq * 0.1;
+                if (colorTransitionTime >= 1) {
+                    colorTransitionTime = 0;
+                    colorIndex = (colorIndex + 1) % colors.length;
+                    material.color.copy(colors[colorIndex]);
+                }
+
+                // Gentle rotation
+                mesh.rotation.x += 0.001;
+                mesh.rotation.y += 0.002;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
