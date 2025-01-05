@@ -39,6 +39,12 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+
+        // mobile msg
+        if (window.innerWidth < 768) {
+            document.body.innerHTML = '<h1 style="color: white; text-align: center; margin-top: 20%; font-family: JetBrains Mono;">please play on pc!</h1>';
+        }
+
         let scene, camera, renderer, analyser, dataArray;
         let geometry, material, mesh;
         let audioElement = null;
@@ -129,7 +135,7 @@
                 depthWrite: false
             });
 
-            const backgroundGeometry = new THREE.PlaneGeometry(2, 4);
+            const backgroundGeometry = new THREE.PlaneGeometry(2.3, 4.6);
             backgroundMesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
             backgroundMesh.position.z = -1;
             backgroundScene.add(backgroundMesh);
