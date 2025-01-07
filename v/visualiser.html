@@ -31,6 +31,14 @@
             background: #3D3D3D;
             cursor: not-allowed;
         }
+
+        .mobile-message {
+            color: white;
+            text-align: center;
+            margin-top: 20%;
+            font-family: monospace;
+        }
+        
     </style>
 </head>
 <body>
@@ -42,7 +50,7 @@
 
         // mobile msg
         if (window.innerWidth < 768) {
-            document.body.innerHTML = '<h1 style="color: white; text-align: center; margin-top: 20%; font-family: JetBrains Mono;">please play on pc!</h1>';
+            document.body.innerHTML = '<h1 class="mobile-message">please play on pc!</h1>';
         }
 
         let scene, camera, renderer, analyser, dataArray;

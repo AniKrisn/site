@@ -135,6 +135,13 @@
             font-size: 36px; 
         }
 
+        .mobile-message {
+            color: white;
+            text-align: center;
+            margin-top: 20%;
+            font-family: monospace;
+        }
+
     </style>
 </head>
 <body>
@@ -159,7 +166,7 @@
 
         // mobile msg
         if (window.innerWidth < 768) {
-            document.body.innerHTML = '<h1 style="color: white; text-align: center; margin-top: 20%;">please play on pc!</h1>';
+            document.body.innerHTML = '<h1 class="mobile-message">please play on pc!</h1>';
         }
 
         const gridSize = 10;
