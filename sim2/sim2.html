@@ -40,15 +40,16 @@
             z-index: 10;
             padding: 10px 20px;
             font-size: 18px;
-            color: #ffffff;
-            background-color: #333333;
+            color: #EEEEEE;
+            background-color: #1d1616cb;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-family: monospace;
         }
 
         .start-button:hover {
-            background-color: #555555;
+            background-color: #1D1616;
         }
     </style>
 </head>
@@ -97,6 +98,7 @@
 
                 // Add a Set to track which boxes this box has already collided with
                 this.collidedWith = new Set();
+
                 this.element.addEventListener('mouseover', () => {
                     if (interactionEnabled && !this.isExpanding) {
                         this.expand();
@@ -133,32 +135,32 @@
                 const dx = this.x - other.x;
                 const dy = this.y - other.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
+                const isColliding = distance < (this.size + other.size) / 2;
 
-                if (distance < (this.size + other.size) / 2) {
-                    const overlap = (this.size + other.size) / 2 - distance;
-                    const angle = Math.atan2(dy, dx);
-                    const pushForce = overlap * 0.05;
+                    if (isColliding) {
+                        const overlap = (this.size + other.size) / 2 - distance;
+                        const angle = Math.atan2(dy, dx); 
+                        const pushForce = overlap * 0.05;
 
-                    this.x += Math.cos(angle) * pushForce;
-                    this.y += Math.sin(angle) * pushForce;
+                        this.x += Math.cos(angle) * pushForce;
+                        this.y += Math.sin(angle) * pushForce;
 
-                    other.x -= Math.cos(angle) * pushForce;
-                    other.y -= Math.sin(angle) * pushForce;
+                        other.x -= Math.cos(angle) * pushForce;
+                        other.y -= Math.sin(angle) * pushForce;
 
-                    if (other.size > 20) {
-                        other.targetSize = Math.max(20, other.size - overlap * 0.2);
-                    }
-
-                    
-                    const currentTime = performance.now();
-                    if (currentTime - this.lastPlayTime > 500) { //debounce
-                        this.playNote();
-                        this.lastPlayTime = currentTime;
-                        this.hasInteracted = true;
-                        console.log("interacted: TRUE");
-                    }
-                }
+                        if (other.size > 20) {
+                            other.targetSize = Math.max(20, other.size - overlap * 0.2);
+                        }
+                        
+                        // Sound triggering logic
+                        // Check if we haven't collided with this specific box before
+                        if (!this.collidedWith.has(other.id)) {
+                            this.playNote();
+                            this.collidedWith.add(other.id);
+                        }
+                    } 
             }
+            
 
             containWithinBounds() {
                 const halfSize = this.size / 2;
@@ -187,9 +189,6 @@
                 this.containWithinBounds();
                 this.updateElement();
                 this.updateOpacity();
-
-                this.hasInteracted = false;
-                console.log("interacted: FALSE");
             }
 
             playNote() {
@@ -204,6 +203,7 @@
             constructor(container) {
                 this.container = container;
                 this.boxes = [];
+                this.boxIdCounter = 0;  // Add a counter for generating unique IDs
                 this.createBoxes();
                 requestAnimationFrame(() => this.animate());
             }
@@ -213,7 +213,9 @@
                     const x = Math.random() * (this.container.offsetWidth - 100) + 50;
                     const y = Math.random() * (this.container.offsetHeight - 100) + 50;
                     const size = Math.random() * 40 + 40;
-                    this.boxes.push(new Box(this.container, x, y, size, NOTES[i]));
+                    const box = new Box(this.container, x, y, size, NOTES[i]);
+                    box.id = this.boxIdCounter++;  // Assign a unique ID to each box
+                    this.boxes.push(box);
                 }
             }
 
