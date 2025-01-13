@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AV</title>
+    <title>AV-1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body { margin: 0; overflow: hidden; background: #000; }
@@ -60,7 +60,7 @@
         let currentVisualizer = 1;
 
         const track1Colors = ['#4793AF', '#FFC470', '#DD5746', '#8B322C', '#D5E7B5', '#72BAA9', '#7E5CAD', '#474E93'].map(color => new THREE.Color(color));
-        const track2Colors = ['#A31D1D', '#6D2323', '#441752', '#FFD65A', '#FF9D23', '#F93827', '#16C47F', '#123524'].map(color => new THREE.Color(color));
+        const track2Colors = ['#F14A00', '#C62300', '#500073', '#2A004E'].map(color => new THREE.Color(color));
         let colors = track1Colors;
 
         function switchTrack() {
@@ -211,10 +211,9 @@
 
                     float noise = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
                     finalColor *= 0.95 + noise * 0.05;
-
-                    float fade = intensity * (0.5 + 0.5 * sin(time));
                     
-                    gl_FragColor = vec4(finalColor, fade);
+                    // Removed the pulsing effect, now just using intensity directly
+                    gl_FragColor = vec4(finalColor, intensity);
                 }
             `;
 

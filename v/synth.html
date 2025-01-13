@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AV-2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer;
+        let time = 0;
+        let intensity = 0.8;
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const geometry = new THREE.PlaneGeometry(2, 2);
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    intensity: { value: intensity },
+                    resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform float time;
+                    uniform float intensity;
+                    uniform vec2 resolution;
+                    varying vec2 vUv;
+
+                    const float PI = 3.14159265359;
+
+                    // Tilted perspective grid
+                    float grid(vec2 uv, float scale) {
+                        vec2 perspective = vec2(
+                            uv.x,
+                            pow(uv.y, 1.2) // Subtle perspective
+                        );
+                        vec2 grid = fract(perspective * scale - vec2(time, 0.0));
+                        float lines = min(
+                            smoothstep(0.95, 0.98, grid.x),
+                            smoothstep(0.95, 0.98, grid.y)
+                        );
+                        return lines * smoothstep(1.1, 0.0, uv.y);
+                    }
+
+                    // Sun glow effect
+                    float sun(vec2 uv, vec2 pos, float size) {
+                        float dist = length(uv - pos);
+                        float sun = smoothstep(size * 0.7, size * 0.4, dist);
+                        return sun;
+                    }
+
+                    // Tilted scanline effect
+                    float scanline(vec2 uv) {
+                        float tilt = uv.x * 0.4;
+                        float z = uv.y + tilt;
+                        float scan = fract(z * 50.0 - time * 2.0);
+                        float intensity = pow(1.0 - scan, 2.0) * 0.2;
+                        return intensity * (1.0 - uv.y);
+                    }
+
+                    void main() {
+                        vec2 uv = vUv;
+                        uv = (gl_FragCoord.xy / resolution.xy);
+                        uv = uv * 2.0 - 1.0;
+                        uv.x *= resolution.x / resolution.y;
+
+                        // Colors
+                        vec3 color1 = vec3(0.8, 0.5, 0.5); // Soft red
+                        vec3 color2 = vec3(0.9, 0.8, 0.6); // Soft cream
+                        vec3 color3 = vec3(0.9, 0.9, 0.9); // Soft white
+                        
+                        // Background gradient
+                        vec3 bg = mix(color1, color2, uv.y + 0.5);
+                        
+                        // Add sun
+                        float sunGlow = sun(uv, vec2(0.0, 0.3), 0.4);
+                        bg = mix(bg, color3, sunGlow * 0.5);
+                        
+                        // Add grid
+                        float gridLines = grid(uv * 0.5 + 0.5, 15.0);
+                        bg += vec3(0.8, 0.8, 1.0) * gridLines * 0.2;
+                        
+                        // Add scanlines
+                        float scan = scanline(uv * 0.5 + 0.5);
+                        bg *= 1.0 - scan;
+                        
+                        // Add subtle noise
+                        float noise = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+                        bg *= 0.97 + noise * 0.03;
+
+                        gl_FragColor = vec4(bg, 1.0) * intensity * 1.3;
+                    }
+                `
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            const material = scene.children[0].material;
+            material.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.005; // Slower animation
+            scene.children[0].material.uniforms.time.value = time;
+            renderer.render(scene, camera);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
