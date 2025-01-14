@@ -179,9 +179,6 @@
 
                 this.currentAudioIndex = 0;
 
-                // Set to track which boxes this box has already collided with
-                this.collidedWith = new Set();
-
                 this.element.addEventListener('mouseover', () => {
                     if (interactionEnabled) {
                         this.expand();
@@ -225,27 +222,23 @@
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 const isColliding = distance < (this.size + other.size) / 2;
 
-                    if (isColliding) {
-                        const overlap = (this.size + other.size) / 2 - distance;
-                        const angle = Math.atan2(dy, dx); 
-                        const pushForce = overlap * 0.1;
+                if (isColliding) {
+                    const overlap = (this.size + other.size) / 2 - distance;
+                    const angle = Math.atan2(dy, dx); 
+                    const pushForce = overlap * 0.1;
 
-                        this.x += Math.cos(angle) * pushForce;
-                        this.y += Math.sin(angle) * pushForce;
+                    this.x += Math.cos(angle) * pushForce;
+                    this.y += Math.sin(angle) * pushForce;
 
-                        other.x -= Math.cos(angle) * pushForce;
-                        other.y -= Math.sin(angle) * pushForce;
+                    other.x -= Math.cos(angle) * pushForce;
+                    other.y -= Math.sin(angle) * pushForce;
 
-                        if (!other.isExpanding && other.size > 20) {
-                            other.targetSize = Math.max(20, other.size - overlap * 0.2);
-                        }
-                        
-                        // Check if we haven't collided with this specific box before
-                        if (!this.collidedWith.has(other.id)) {
-                            this.playNote();
-                            this.collidedWith.add(other.id);
-                        }
-                    } 
+                    if (!other.isExpanding && other.size > 20) {
+                        other.targetSize = Math.max(20, other.size - overlap * 0.2);
+                    }
+
+                    this.playNote();
+                } 
             }
             
 
@@ -278,7 +271,6 @@
 
                 this.containWithinBounds();
                 this.updateElement();
-                this.updateOpacity();
             }
         }
 
