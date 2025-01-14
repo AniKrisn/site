@@ -55,10 +55,56 @@
 
         .sliders {
             display: flex;
-            gap: 20px;
+            gap: 10vw;
             color: #EEEEEE;
             font-family: monospace;
         }
+
+        .styled-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 200px;
+        height: 8px;
+        background: linear-gradient(90deg, #D84040, #8E1616);
+        border-radius: 5px;
+        outline: none;
+        transition: background 0.3s;
+        margin: 8px 0;
+        cursor: pointer;
+        }
+
+        .styled-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #EEEEEE;
+            border: 2px solid #1D1616;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .styled-slider::-webkit-slider-thumb:hover {
+            background: #D84040;
+            transform: scale(1.2);
+        }
+
+        .styled-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #EEEEEE;
+            border: 2px solid #1D1616;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .styled-slider::-moz-range-thumb:hover {
+            background: #982B1C;
+            transform: scale(1.2);
+        }
+
     </style>
 </head>
 <body>
@@ -67,13 +113,13 @@
     <div class="sliders">
         <label>
             Spring: 
-            <input id="springSlider" type="range" min="0.1" max="1.0" step="0.01" value="0.38">
-            <span id="springValue">0.38</span>
+            <input id="springSlider" class="styled-slider" type="range" min="0.1" max="1.0" step="0.01" value="0.37">
+            <span id="springValue">0.37</span>
         </label>
         <label>
             Damping: 
-            <input id="dampingSlider" type="range" min="0.1" max="1.0" step="0.01" value="0.88">
-            <span id="dampingValue">0.88</span>
+            <input id="dampingSlider" class="styled-slider" type="range" min="0.1" max="1.0" step="0.01" value="0.73">
+            <span id="dampingValue">0.73</span>
         </label>
     </div>
 
@@ -92,6 +138,22 @@
         ];
 
         let interactionEnabled = false;
+        let spring = 0.37;
+        let damping = 0.73;
+
+        const springSlider = document.getElementById('springSlider');
+        const dampingSlider = document.getElementById('dampingSlider');
+        const springValue = document.getElementById('springValue');
+        const dampingValue = document.getElementById('dampingValue');
+
+        springSlider.addEventListener('input', () => {
+            spring = parseFloat(springSlider.value);
+            springValue.textContent = spring.toFixed(2);
+        });
+        dampingSlider.addEventListener('input', () => {
+            damping = parseFloat(dampingSlider.value);
+            dampingValue.textContent = damping.toFixed(2);
+        });
 
         class Box {
             constructor(container, x, y, size, note) {
@@ -209,9 +271,6 @@
             }
 
             update() {
-                const spring = 0.38;
-                const damping = 0.68;
-
                 const sizeDiff = this.targetSize - this.size;
                 this.velocity += sizeDiff * spring;
                 this.velocity *= damping;
