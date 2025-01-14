@@ -92,17 +92,20 @@
 
                 this.container.appendChild(this.element);
 
-                // Create a pool of audio elements for better performance
-                this.audioPool = Array(3).fill(null).map(() => new Audio(note));
+                // Pool of audio elements for better performance
+                this.audioPool = Array(6).fill(null).map(() => new Audio(note));
+
                 this.currentAudioIndex = 0;
 
-                // Add a Set to track which boxes this box has already collided with
+                // Set to track which boxes this box has already collided with
                 this.collidedWith = new Set();
 
                 this.element.addEventListener('mouseover', () => {
-                    if (interactionEnabled && !this.isExpanding) {
+                    if (interactionEnabled) {
                         this.expand();
-                        this.playNote();
+                        if (this.isExpanding) {
+                            this.playNote();
+                        }
                     }
                 });
             }
@@ -115,13 +118,16 @@
             }
 
             expand() {
-                if (this.size < MAX && !this.isExpanding) {
-                    this.isExpanding = true;
+                if (this.size < MAX) {
                     this.targetSize = this.size * 1.8;
-                    setTimeout(() => {
-                        this.targetSize = this.size;
+                    if (this.targetSize != this.size) {
+                        this.isExpanding = true;
+                    } else {
                         this.isExpanding = false;
-                    }, 300);
+                    }
+                    setTimeout(() => {
+                        this.isExpanding = false;
+                    }, 150);
                 }
                 this.updateOpacity();
             }
@@ -140,7 +146,7 @@
                     if (isColliding) {
                         const overlap = (this.size + other.size) / 2 - distance;
                         const angle = Math.atan2(dy, dx); 
-                        const pushForce = overlap * 0.05;
+                        const pushForce = overlap * 0.1;
 
                         this.x += Math.cos(angle) * pushForce;
                         this.y += Math.sin(angle) * pushForce;
@@ -148,11 +154,10 @@
                         other.x -= Math.cos(angle) * pushForce;
                         other.y -= Math.sin(angle) * pushForce;
 
-                        if (other.size > 20) {
+                        if (!other.isExpanding && other.size > 20) {
                             other.targetSize = Math.max(20, other.size - overlap * 0.2);
                         }
                         
-                        // Sound triggering logic
                         // Check if we haven't collided with this specific box before
                         if (!this.collidedWith.has(other.id)) {
                             this.playNote();
@@ -177,6 +182,12 @@
                 this.updateOpacity();
             }
 
+            playNote() {
+                this.audioPool[this.currentAudioIndex].currentTime = 0;
+                this.audioPool[this.currentAudioIndex].play();
+                this.currentAudioIndex = (this.currentAudioIndex + 1) % this.audioPool.length;
+            }
+
             update() {
                 const spring = 0.9;
                 const damping = 0.8;
@@ -190,20 +201,13 @@
                 this.updateElement();
                 this.updateOpacity();
             }
-
-            playNote() {
-                // Use audio pool for better performance
-                this.audioPool[this.currentAudioIndex].currentTime = 0;
-                this.audioPool[this.currentAudioIndex].play();
-                this.currentAudioIndex = (this.currentAudioIndex + 1) % this.audioPool.length;
-            }
         }
 
         class JellySystem {
             constructor(container) {
                 this.container = container;
                 this.boxes = [];
-                this.boxIdCounter = 0;  // Add a counter for generating unique IDs
+                this.boxIdCounter = 0;
                 this.createBoxes();
                 requestAnimationFrame(() => this.animate());
             }
@@ -231,17 +235,6 @@
                 requestAnimationFrame(() => this.animate());
             }
         }
-
-        // Global AudioContext and Compressor Setup
-        Box.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        Box.compressor = Box.audioContext.createDynamicsCompressor();
-
-        Box.compressor.threshold.setValueAtTime(-24, Box.audioContext.currentTime); 
-        Box.compressor.knee.setValueAtTime(30, Box.audioContext.currentTime);       
-        Box.compressor.ratio.setValueAtTime(100000, Box.audioContext.currentTime);     
-        Box.compressor.attack.setValueAtTime(0.003, Box.audioContext.currentTime); 
-        Box.compressor.release.setValueAtTime(0.75, Box.audioContext.currentTime); 
-        Box.compressor.connect(Box.audioContext.destination);
 
         const container = document.querySelector('.container');
         const startButton = document.querySelector('.start-button');
