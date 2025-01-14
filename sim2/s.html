@@ -141,6 +141,9 @@
         let spring = 0.37;
         let damping = 0.73;
 
+        // Set to track which boxes this box has already collided with
+        this.collidedWith = new Set();
+
         const springSlider = document.getElementById('springSlider');
         const dampingSlider = document.getElementById('dampingSlider');
         const springValue = document.getElementById('springValue');
@@ -176,6 +179,9 @@
 
                 // Pool of audio elements for better performance
                 this.audioPool = Array(6).fill(null).map(() => new Audio(note));
+
+                // Set to track which boxes this box has already collided with
+                this.collidedWith = new Set();
 
                 this.currentAudioIndex = 0;
 
@@ -237,8 +243,12 @@
                         other.targetSize = Math.max(20, other.size - overlap * 0.2);
                     }
 
-                    this.playNote();
-                } 
+                    // Check if we haven't collided with this specific box before
+                    if (!this.collidedWith.has(other.id)) {
+                        this.playNote();
+                        this.collidedWith.add(other.id);
+                    }
+                }   
             }
             
 
