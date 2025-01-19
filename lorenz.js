@@ -1,4 +1,4 @@
-// Perlin Noise implementation
+// Perlin Noise
 const noise = (() => {
     const permutation = new Array(256).fill(0).map(() => Math.floor(Math.random() * 256));
     const p = new Array(512).fill(0).map((_, i) => permutation[i % 256]);
@@ -88,12 +88,12 @@ function interpolateColor(color1, color2, factor) {
 
 const leftWingColors = {
     primary: '#EB5A3C',
-    secondary: '#DF9755'
+    secondary: '#D9EAFD'
 };
 
 const rightWingColors = {
-    primary: '#16C47F',
-    secondary: '#EDF4C2'
+    primary: '#243642',
+    secondary: '#E2F1E7'
 };
 
 function drawStar(ctx, x, y, size) {
@@ -183,7 +183,7 @@ function draw() {
     const centerY = canvas.height / 2;
     const time = Date.now() * 0.0013;
     
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = 8;
     ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
     
     for (let i = 0; i < points.length; i++) {
@@ -206,25 +206,6 @@ function draw() {
     ctx.globalAlpha = 1;
 }
 
-canvas.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    lastX = e.clientX;
-    lastY = e.clientY;
-});
-
-canvas.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-        const deltaX = e.clientX - lastX;
-        const deltaY = e.clientY - lastY;
-        rotateY += deltaX * 0.5;
-        rotateX += deltaY * 0.5;
-        lastX = e.clientX;
-        lastY = e.clientY;
-    }
-});
-
-canvas.addEventListener('mouseup', () => isDragging = false);
-canvas.addEventListener('mouseleave', () => isDragging = false);
 
 function animate() {
     updateLorenz();
