@@ -28,6 +28,7 @@ body {
     position: relative;
 }
 
+
 canvas {
     position: fixed;
     top: 0;
@@ -36,7 +37,6 @@ canvas {
     height: 100vh;
     z-index: -1;
     cursor: move;
-    pointer-events: all;    
 }
 
 .index-page {

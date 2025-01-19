@@ -61,14 +61,14 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 // Lorenz parameters
-const sigma = 10;
-const rho = 29;
+const sigma = 11;
+const rho = 38;
 const beta = 8/3;
-const dt = 0.012;
+const dt = 0.014;
 
 const points = [];
 const maxPoints = 3000;  
-let x = 0, y = 2, z = 10;
+let x = 20, y = 4, z = 3;
 
 function interpolateColor(color1, color2, factor) {
     const r1 = parseInt(color1.substring(1,3), 16);
@@ -230,4 +230,15 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-animate();
+
+function handleResize() {
+    if (window.innerWidth < 760) {
+        container.innerHTML = '';
+    }
+}
+
+window.addEventListener('resize', handleResize);
+
+if (window.innerWidth > 760) {
+    animate();
+}
