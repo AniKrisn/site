@@ -64,7 +64,7 @@ resizeCanvas();
 const sigma = 11;
 const rho = 38;
 const beta = 8/3;
-const dt = 0.014;
+const dt = 0.0155;
 
 const points = [];
 const maxPoints = 3000;  
@@ -92,12 +92,14 @@ const leftWingColors = {
 };
 
 const rightWingColors = {
-    primary: '#E7D283',
+    primary: '#16C47F',
     secondary: '#EDF4C2'
 };
 
 function drawStar(ctx, x, y, size) {
-    const spikes = 2;
+    const min = 5; // Minimum number of spikes
+    const max = 9; // Maximum number of spikes
+    const spikes = Math.floor(Math.random() * (max - min + 1)) + min; // Fluctuates between 5 and 14
     const outerRadius = size;
     const innerRadius = size / 2;
 
@@ -158,7 +160,7 @@ function updateLorenz() {
     y += dy;
     z += dz;
     
-    const scale = 6;
+    const scale = 6.5;
     const scaledX = x * scale;
     const scaledY = y * scale;
     const scaledZ = z * scale;
@@ -179,7 +181,7 @@ function draw() {
     
     const centerX = canvas.width / 2 + 100;  // Shifted slightly right
     const centerY = canvas.height / 2;
-    const time = Date.now() * 0.001;
+    const time = Date.now() * 0.0013;
     
     ctx.shadowBlur = 10;
     ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
@@ -188,8 +190,8 @@ function draw() {
         const point = rotatePoint({...points[i]});
         
         // Add glitch effect using Perlin noise
-        const glitchX = noise(point.x * 0.1, point.y * 0.1, time) * 0.55;
-        const glitchY = noise(point.y * 0.1, point.z * 0.1, time) * 0.75;
+        const glitchX = noise(point.x * 0.1, point.y * 0.1, time) * 0.65;
+        const glitchY = noise(point.y * 0.1, point.z * 0.1, time) * 0.85;
         
         const scale = 800 / (800 - point.z);
         const screenX = centerX + (point.x + glitchX) * scale;
@@ -198,7 +200,7 @@ function draw() {
         ctx.fillStyle = points[i].color;
         ctx.globalAlpha = (i / points.length) * 0.8 + 0.2;
         
-        drawStar(ctx, screenX, screenY, 1.8 * scale); 
+        drawStar(ctx, screenX, screenY, 1.6 * scale); 
         ctx.fill();
     }
     ctx.globalAlpha = 1;
