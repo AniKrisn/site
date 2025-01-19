@@ -67,7 +67,7 @@ const beta = 8/3;
 const dt = 0.0155;
 
 const points = [];
-const maxPoints = 3000;  
+const maxPoints = 500;  
 let x = 20, y = 4, z = 3;
 
 function interpolateColor(color1, color2, factor) {
@@ -88,18 +88,18 @@ function interpolateColor(color1, color2, factor) {
 
 const leftWingColors = {
     primary: '#EB5A3C',
-    secondary: '#D9EAFD'
+    secondary: '#d5eab2',
 };
 
 const rightWingColors = {
     primary: '#243642',
-    secondary: '#E2F1E7'
+    secondary: '#E2F1E7',
 };
 
 function drawStar(ctx, x, y, size) {
-    const min = 5; // Minimum number of spikes
-    const max = 9; // Maximum number of spikes
-    const spikes = Math.floor(Math.random() * (max - min + 1)) + min; // Fluctuates between 5 and 14
+    const min = 5; 
+    const max = 9; 
+    const spikes = Math.floor(Math.random() * (max - min + 1)) + min;
     const outerRadius = size;
     const innerRadius = size / 2;
 
@@ -179,7 +179,7 @@ function draw() {
     ctx.fillStyle = '#1a1a1a';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    const centerX = canvas.width / 2 + 100;  // Shifted slightly right
+    const centerX = canvas.width / 2;  
     const centerY = canvas.height / 2;
     const time = Date.now() * 0.0013;
     
