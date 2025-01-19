@@ -28,6 +28,17 @@ body {
     position: relative;
 }
 
+canvas {
+    position: fixed;
+    top: 0;
+    left: 4%;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    cursor: move;
+    pointer-events: all;    
+}
+
 .index-page {
     overflow: hidden;
 }
