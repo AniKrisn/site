@@ -256,6 +256,31 @@
             let stars = new THREE.Points(starsGeometry, starsMaterial);
             scene.add(stars);
 
+            document.addEventListener('mousedown', (event) => {
+                isDragging = true;
+                previousMousePosition = {
+                    x: event.clientX,
+                    y: event.clientY
+                };
+            });
+
+            // mobile support
+            document.addEventListener('touchstart', (event) => {
+                isDragging = true;
+                previousMousePosition = {
+                    x: event.touches[0].clientX,
+                    y: event.touches[0].clientY
+                };
+            });
+
+            document.addEventListener('touchend', onMouseUp);
+            document.addEventListener('touchmove', (event) => {
+                onMouseMove({
+                    clientX: event.touches[0].clientX,
+                    clientY: event.touches[0].clientY
+                });
+            });
+
             document.addEventListener('keydown', (event) => {
                 if (event.code === 'Space') {
                     togglePause();
@@ -270,7 +295,7 @@
                     y: event.clientY
                 };
             });
-                        
+
             document.addEventListener('mouseup', onMouseUp);
             document.addEventListener('mousemove', onMouseMove);
             window.addEventListener('resize', onWindowResize);
