@@ -4,7 +4,7 @@
     <title>AV</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { margin: 0; overflow: hidden; background: #1a1a1a; }
+        body { margin: 0; overflow: hidden; background: #1f1f1f; }
         #controls { 
             position: fixed; 
             top: 26px; 
@@ -160,6 +160,7 @@
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x1f1f1f);
             renderer.autoClear = false;
             document.body.appendChild(renderer.domElement);
 
@@ -172,7 +173,7 @@
                 flatShading: true,
                 shininess: 50,
                 transparent: true,
-                opacity: 1.0 
+                opacity: 0.6 
             });
 
             mesh = new THREE.Mesh(geometry, material);
