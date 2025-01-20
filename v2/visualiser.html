@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>...</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        canvas { 
+            display: block; 
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-family: monospace;
+        }
+        #startButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: monospace;
+            border: 2px solid #000;
+            letter-spacing: 0.3ch;
+            font-weight: 550;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">DISSOLVE</div>
+    <button id="startButton">...</button>
+    <script>
+        let audioContext, analyzer, dataArray;
+        let audioInitialized = false;
+        let scene, camera, renderer;
+        let geometries = [];
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let isPaused = false;
+        let audioStarted = false;
+
+        function loadScript(url) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = url;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        async function start() {
+            try {
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');
+                init();
+                
+                document.getElementById('startButton').addEventListener('click', async () => {
+                    if (!audioStarted) {
+                        audioStarted = true;
+                        document.getElementById('startButton').disabled = true;
+                        await initAudio();
+                        document.getElementById('startButton').style.display = 'none';
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load Three.js:', error);
+                document.getElementById('info').textContent = 'Error loading Three.js';
+            }
+        }
+
+        async function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            try {
+                const response = await fetch('jungle.wav');
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                
+                analyzer = audioContext.createAnalyser();
+                analyzer.fftSize = 256;
+                const bufferLength = analyzer.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                source.connect(analyzer);
+                analyzer.connect(audioContext.destination);
+                source.start(0);
+                audioInitialized = true;
+            } catch (error) {
+                console.error('Error initializing audio:', error);
+            }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            if (audioInitialized) {
+                if (isPaused) {
+                    audioContext.suspend();
+                } else {
+                    audioContext.resume();
+                }
+            }
+        }
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            camera.position.set(15, 10, 15);
+            camera.lookAt(0, 0, 0);
+
+            const shapes = [
+                { color: 0xff4444, rotation: { x: 0, y: Math.PI / 6, z: Math.PI / 4 }, freqRange: [0, 3] },
+                { color: 0x4444ff, rotation: { x: Math.PI / 6, y: -Math.PI / 6, z: Math.PI / 2 }, freqRange: [4, 8] },
+                { color: 0xffaa00, rotation: { x: Math.PI / 6, y: 0, z: -Math.PI / 6 }, freqRange: [9, 12] }
+            ];
+
+            const originGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+            const originMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const originMarker = new THREE.Mesh(originGeometry, originMaterial);
+            scene.add(originMarker);
+
+            shapes.forEach((shape, index) => {
+                const height = 10;
+                const baseRadius = 2;
+                const topRadius = 0.1;
+                
+                const projectorGeometry = new THREE.CylinderGeometry(baseRadius, topRadius, height, 4, 1, true);
+                projectorGeometry.translate(0, height/2, 0);
+                
+                const edges = new THREE.EdgesGeometry(projectorGeometry);
+                const material = new THREE.LineBasicMaterial({ 
+                    color: shape.color,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const wireframe = new THREE.LineSegments(edges, material);
+                
+                const glowMaterial = new THREE.ShaderMaterial({
+                    uniforms: {
+                        color: { value: new THREE.Color(shape.color) },
+                        intensity: { value: 0.5 }
+                    },
+                    vertexShader: `
+                        varying vec3 vNormal;
+                        void main() {
+                            vNormal = normalize(normalMatrix * normal);
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 color;
+                        uniform float intensity;
+                        varying vec3 vNormal;
+                        void main() {
+                            float glow = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0) * intensity;
+                            gl_FragColor = vec4(color, 1.0) * glow;
+                        }
+                    `,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    side: THREE.DoubleSide
+                });
+
+                const glowMesh = new THREE.Mesh(projectorGeometry, glowMaterial);
+                glowMesh.scale.multiplyScalar(1);
+
+                const projectorGroup = new THREE.Group();
+                projectorGroup.add(wireframe);
+                projectorGroup.add(glowMesh);
+                
+                projectorGroup.rotation.set(
+                    shape.rotation.x,
+                    shape.rotation.y,
+                    shape.rotation.z
+                );
+
+                scene.add(projectorGroup);
+                geometries.push(projectorGroup);
+            });
+
+            const gridHelper = new THREE.GridHelper(150, 150, 0xffffff, 0x444444);
+            gridHelper.material.opacity = 0.4;
+            gridHelper.material.transparent = true;
+
+            scene.add(gridHelper);
+
+            scene.background = new THREE.Color(0x1f1f1f);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            const starsCount = 500;
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsPositions = new Float32Array(starsCount * 3);
+            const starsSpeeds = new Float32Array(starsCount);
+
+            for(let i = 0; i < starsCount; i++) {
+                starsPositions[i * 3] = (Math.random() - 0.5) * 200;
+                starsPositions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+                starsPositions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+                starsSpeeds[i] = Math.random() * 0.1;
+            }
+
+            starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+            const starsMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.1,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            let stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+
+            document.addEventListener('keydown', (event) => {
+                if (event.code === 'Space') {
+                    togglePause();
+                    event.preventDefault();
+                }
+            });
+
+            document.addEventListener('mousedown', (event) => {
+                isDragging = true;
+                previousMousePosition = {
+                    x: event.clientX,
+                    y: event.clientY
+                };
+            });
+                        
+            document.addEventListener('mouseup', onMouseUp);
+            document.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('resize', onWindowResize);
+
+            animate();
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+        }
+
+        function onMouseMove(event) {
+            if (!isDragging) return;
+
+            const deltaMove = {
+                x: event.clientX - previousMousePosition.x,
+                y: event.clientY - previousMousePosition.y
+            };
+
+            const deltaRotationQuaternion = new THREE.Quaternion()
+                .setFromEuler(new THREE.Euler(
+                    deltaMove.y * (Math.PI / 180) * 0.2,
+                    deltaMove.x * (Math.PI / 180) * 0.15,
+                    0,
+                    'XYZ'
+                ));
+
+            camera.position.applyQuaternion(deltaRotationQuaternion);
+            camera.lookAt(0, 0, 0);
+
+            previousMousePosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function getAverageFrequency(startIndex, endIndex) {
+            if (!audioInitialized || !analyzer || isPaused) return 0;
+            
+            analyzer.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = startIndex; i <= endIndex; i++) {
+                sum += dataArray[i];
+            }
+            return sum / (endIndex - startIndex + 1) / 255;
+        }
+
+        // Adding time so that the shapes accelerate slightly from the start 
+        let lastTime = Date.now();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const currentTime = Date.now();
+            const deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
+
+            if (!isPaused) {
+                
+                geometries.forEach((geometry, index) => {
+                    if (audioInitialized) {
+                        const freqRange = [0, 12];
+                        const amplitude = getAverageFrequency(freqRange[0], freqRange[1]);
+                        
+                        const baseScale = 1 + amplitude * 0.2;
+                        geometry.scale.set(baseScale, baseScale, baseScale);
+                        
+                        geometry.rotation.x += 0.0005 + amplitude * 0.0003 * (deltaTime/12);
+                        geometry.rotation.y += 0.001 + amplitude * 0.0003 * (deltaTime/12);
+                        geometry.rotation.z += 0.0015 + amplitude * 0.0001 * (deltaTime/12);
+                        
+                        const glowMesh = geometry.children[1];
+                        if (glowMesh.material.uniforms) {
+                            glowMesh.material.uniforms.intensity.value = 0.05 + amplitude;
+                        }
+                    } else {
+                        geometry.rotation.x += 0.0005;
+                        geometry.rotation.y += 0.001;
+                        geometry.rotation.z += 0.0015;
+                    }
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        start();
+    </script>
+</body>
+</html>

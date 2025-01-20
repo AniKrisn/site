@@ -21,10 +21,12 @@ function createCluster(startPos, endPos, count, minHeight, maxHeight, minBottom,
 function spawnClusters() {
     const fragment = document.createDocumentFragment();
 
+    
     createCluster(15, 20, 7, 10, 20, -10, 10, fragment);
     createCluster(0, 3, 4, 5, 12, 0, 10, fragment);
     createCluster(39, 51, 11, 20, 40, 5, 25, fragment);
     createCluster(85, 95, 9, 40, 60, 60, 80, fragment);
+
 
     fragment.appendChild(createLine(28, 15, 5, Math.random() * 4));
     fragment.appendChild(createLine(29, 16, 5, Math.random() * 4));

@@ -70,6 +70,7 @@ const points = [];
 const maxPoints = 500;  
 let x = 20, y = 4, z = 3;
 
+
 function interpolateColor(color1, color2, factor) {
     const r1 = parseInt(color1.substring(1,3), 16);
     const g1 = parseInt(color1.substring(3,5), 16);
@@ -225,3 +226,4 @@ window.addEventListener('resize', handleResize);
 if (window.innerWidth > 760) {
     animate();
 }
+
