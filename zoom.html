@@ -43,12 +43,17 @@
             font-weight: bolder;
             letter-spacing: 0.4ch;
         }
+        .scroll-text a {
+            text-decoration: none;
+            color: #333;
+            pointer-events: auto;
+        }
     </style>
 </head>
 <body>
     <canvas id="visualizer"></canvas>
     <div class="text-overlay">🔴</div>
-    <div class="scroll-text">ZOOM</div>
+    <div class="scroll-text"><a href="index.html">ZOOM</a></div>
     <script>
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
@@ -67,11 +72,18 @@
 
         // Add simple auto-scroll
         canvas.addEventListener('click', (e) => {
-            // Don't trigger zoom if clicking the dot when it's visible
+            // Get click coordinates relative to canvas
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Check if click is in the top area where the "ZOOM" text is
+            if (y < window.innerHeight * 0.1) {  // Allow clicks in top 10% of screen
+                return;  // Let the default link behavior work
+            }
+            
+            // Rest of the click handling for zooming
             if (textOpacity > 0.5) {
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
                 const centerX = canvas.width / 2;
                 const centerY = canvas.height / 2;
                 
@@ -301,8 +313,8 @@
         function animate() {
             // Calculate background color based on scale
             const progress = Math.min((scale - 1) / 2, 1);  // Full transition by scale 3
-            const startColor = {r: 238, g: 238, b: 238};  // #EEEEEE
-            const endColor = {r: 223, g: 224, b: 223};    // #DFE0DF
+            const startColor = {r: 254, g: 243, b: 226};  // #FEF3E2
+            const endColor = {r: 250, g: 177, b: 47};    // #FAB12F
             
             const r = Math.round(startColor.r + (endColor.r - startColor.r) * progress);
             const g = Math.round(startColor.g + (endColor.g - startColor.g) * progress);
