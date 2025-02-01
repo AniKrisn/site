@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔴</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50vh;
+            font-family: monospace;
+        }
+        canvas { 
+            display: block;
+        }
+        .text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            opacity: 0;
+            pointer-events: none;
+            text-align: center;
+            transition: opacity 0.3s ease;
+            color: #00917C;
+        }
+        .scroll-text {
+            position: fixed;
+            top: 3%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: monospace;
+            font-size: 18px;
+            color: #333;
+            pointer-events: none;
+            z-index: 1000;
+            text-transform: none;
+            font-weight: bolder;
+            letter-spacing: 0.4ch;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="visualizer"></canvas>
+    <div class="text-overlay">🔴</div>
+    <div class="scroll-text">ZOOM</div>
+    <script>
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        const textOverlay = document.querySelector('.text-overlay');
+
+        let scale = 1;
+        let visualOpacity = 1;
+        let textOpacity = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Add simple auto-scroll
+        canvas.addEventListener('click', (e) => {
+            // Don't trigger zoom if clicking the dot when it's visible
+            if (textOpacity > 0.5) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                // If clicking near center where dot is, zoom out
+                const clickRadius = 50; // Adjust this value as needed
+                const distanceFromCenter = Math.sqrt(
+                    Math.pow(x - centerX, 2) + 
+                    Math.pow(y - centerY, 2)
+                );
+                
+                if (distanceFromCenter <= clickRadius) {
+                    const duration = 350;
+                    const startTime = performance.now();
+                    const startScale = scale;
+                    
+                    function scrollOut() {
+                        const elapsed = performance.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        
+                        scale = startScale + (1 - startScale) * progress;
+                        
+                        // Update opacities
+                        visualOpacity = Math.max(0, 1 - (scale - 1) / 2);
+                        textOpacity = Math.max(0, Math.min(1, (scale - 2) / 1.5));
+                        textOverlay.style.opacity = textOpacity;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(scrollOut);
+                        }
+                    }
+                    
+                    requestAnimationFrame(scrollOut);
+                    return;
+                }
+            }
+
+            const duration = 800;
+            const startTime = performance.now();
+            const startScale = scale;
+            
+            function scroll() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Add easing function for acceleration
+                const easedProgress = progress < 0.7 
+                    ? 2 * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                
+                scale = startScale + (10 - startScale) * easedProgress;
+                
+                // Update opacities
+                visualOpacity = Math.max(0, 1 - (scale - 1) / 2);
+                textOpacity = Math.max(0, Math.min(1, (scale - 2) / 1.5));
+                textOverlay.style.opacity = textOpacity;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(scroll);
+                }
+            }
+            
+            requestAnimationFrame(scroll);
+        });
+
+        // Add zoom handling
+        window.addEventListener('wheel', (e) => {
+            const zoomSpeed = 0.004;
+            scale += e.deltaY * zoomSpeed * 1.2;
+            scale = Math.max(1, Math.min(scale, 10));  // Limit zoom range
+
+            // Calculate opacities
+            visualOpacity = Math.max(0, 1 - (scale - 1) / 2);
+            
+            // Start text fade in later
+            textOpacity = Math.max(0, Math.min(1, (scale - 2) / 1.5));
+            textOverlay.style.opacity = textOpacity;
+        });
+
+        const dots = [];
+        const numberOfDots = 16;
+        const gridSize = 100;
+        const spacing = 20;
+        const maxSpeed = 20;
+        const acceleration = 0.01;
+
+        for (let i = 0; i < numberOfDots; i++) {
+            dots.push({
+                x: 0,
+                y: 0,
+                direction: Math.floor(Math.random() * 4),
+                speed: 0.01,
+                accelerating: true
+            });
+        }
+
+        function drawGrid() {
+            const shapeProgress = Math.max(0, (scale - 2) / 3); // Start transform at scale 2, complete by scale 5
+            const gridSize = 100 * (1 - shapeProgress * 9); // Shrink more gradually
+            
+            ctx.strokeStyle = `rgba(255, 92, 10, ${visualOpacity})`; // 255,92,10 (darker)  253,112,20 (lighter)
+            ctx.lineWidth = 1;
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.scale(scale, scale);
+            ctx.translate(-centerX, -centerY);
+
+            // Blend between square and circle
+            if (shapeProgress > 0) {
+                // Draw single circle that grows with progress
+                const numLines = 16; // Match number of grid lines
+                const angleStep = (2 * Math.PI) / numLines;
+
+                // Draw concentric circles
+                for (let r = spacing; r <= gridSize; r += spacing) {
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // Draw radial lines
+                for (let i = 0; i < numLines; i++) {
+                    const angle = i * angleStep;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(
+                        centerX + Math.cos(angle) * gridSize,
+                        centerY + Math.sin(angle) * gridSize
+                    );
+                    ctx.stroke();
+                }
+            }
+
+            // Draw square grid with inverse progress
+            const squareProgress = 1 - shapeProgress;
+            if (squareProgress > 0) {
+                ctx.globalAlpha = squareProgress;
+                for (let x = -gridSize; x <= gridSize; x += spacing) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX + x, centerY - gridSize);
+                    ctx.lineTo(centerX + x, centerY + gridSize);
+                    ctx.stroke();
+                }
+
+                for (let y = -gridSize; y <= gridSize; y += spacing) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - gridSize, centerY + y);
+                    ctx.lineTo(centerX + gridSize, centerY + y);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            ctx.restore();
+        }
+
+        function updateDotPosition(dot) {
+            if (dot.accelerating) {
+                dot.speed = Math.min(dot.speed + acceleration, maxSpeed);
+            } else {
+                dot.speed = Math.max(dot.speed - acceleration, 0.5);
+            }
+
+            const isAtIntersection = 
+                Math.abs(dot.x) % spacing < dot.speed &&
+                Math.abs(dot.y) % spacing < dot.speed;
+
+            if (isAtIntersection) {
+                if (Math.random() < 0.1) {
+                    dot.accelerating = !dot.accelerating;
+                }
+                if (Math.random() < 0.2) {
+                    dot.direction = Math.floor(Math.random() * 4);
+                }
+            }
+
+            switch(dot.direction) {
+                case 0:
+                    dot.x += dot.speed;
+                    if (dot.x > gridSize) dot.x = -gridSize;
+                    break;
+                case 1:
+                    dot.x -= dot.speed;
+                    if (dot.x < -gridSize) dot.x = gridSize;
+                    break;
+                case 2:
+                    dot.y += dot.speed;
+                    if (dot.y > gridSize) dot.y = -gridSize;
+                    break;
+                case 3:
+                    dot.y -= dot.speed;
+                    if (dot.y < -gridSize) dot.y = gridSize;
+                    break;
+            }
+
+            if (dot.direction < 2) {
+                dot.y = Math.round(dot.y / spacing) * spacing;
+            } else {
+                dot.x = Math.round(dot.x / spacing) * spacing;
+            }
+        }
+
+        function drawDots() {
+            const dotOpacity = Math.max(0, 1 - (scale - 1) / 0.95); 
+            ctx.fillStyle = `rgba(248,49,47, ${dotOpacity})`; // 248,49,47 (darker) 241,90,89 (lighter)
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.scale(scale, scale);
+            ctx.translate(-centerX, -centerY);
+            
+            dots.forEach(dot => {
+                updateDotPosition(dot);
+                ctx.beginPath();
+                ctx.arc(centerX + dot.x, centerY + dot.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.restore();
+        }
+
+        function animate() {
+            // Calculate background color based on scale
+            const progress = Math.min((scale - 1) / 2, 1);  // Full transition by scale 3
+            const startColor = {r: 238, g: 238, b: 238};  // #EEEEEE
+            const endColor = {r: 223, g: 224, b: 223};    // #DFE0DF
+            
+            const r = Math.round(startColor.r + (endColor.r - startColor.r) * progress);
+            const g = Math.round(startColor.g + (endColor.g - startColor.g) * progress);
+            const b = Math.round(startColor.b + (endColor.b - startColor.b) * progress);
+            
+            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawGrid();
+            drawDots();
+            
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        function updateCursor(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            const distanceFromCenter = Math.sqrt(
+                Math.pow(x - centerX, 2) + 
+                Math.pow(y - centerY, 2)
+            );
+
+            // Check if cursor is near dot when it's visible
+            if (textOpacity > 0.5 && distanceFromCenter <= 50) {
+                canvas.style.cursor = 'pointer';
+            }
+            // Check if cursor is within grid area and grid is visible
+            else if (distanceFromCenter <= (gridSize * scale) && visualOpacity > 0.1) {
+                canvas.style.cursor = 'pointer';
+            } else {
+                canvas.style.cursor = 'default';
+            }
+        }
+
+        // Add mousemove listener
+        canvas.addEventListener('mousemove', updateCursor);
+    </script>
+</body>
+</html>

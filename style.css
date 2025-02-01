@@ -39,6 +39,19 @@ canvas {
     cursor: move;
 }
 
+details > summary {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer; /* improves usability */
+  list-style: none;
+}
+
+/* Ensure the header renders inline */
+details > summary h2 {
+  display: inline;
+  margin: 0;
+}
+
 .index-page {
     overflow: hidden;
 }
