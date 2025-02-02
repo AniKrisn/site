@@ -59,23 +59,22 @@
         }
 
         function drawNorthernLights(time) {
-            /* ctx.fillStyle = 'rgba(10, 5, 20, 0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height); */
+            ctx.fillStyle = 'rgba(10, 5, 20, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const timeScale = time * 0.008;
+            const timeScale = time * 0.004;
             const moveX = Math.sin(timeScale * 0.5) * canvas.width * 0.2;
             const moveY = Math.cos(timeScale * 0.3) * canvas.height * 0.1;
 
-            const fadeFactor = 0.98; // Adjust this value for fade speed
-            const hueIncrement = 0.14; // Slow hue increase
-
+            const intensity = 0.95;
+            const hueIncrement = 0.06; // Slow hue increase
 
             for (let x = 0; x < canvas.width; x += 3) {
                 for (let y = 0; y < canvas.height; y += 3) {
                     const noiseX = (x + moveX) * 0.002;
                     const noiseY = (y + moveY) * 0.003;
-                    const noiseValue = (noise(noiseX, noiseY, timeScale) + 1) / 2 * fadeFactor;
-                    const noiseValue2 = (noise(noiseX * 2, noiseY * 2, timeScale * 1.5) + 1) / 2 * fadeFactor;
+                    const noiseValue = (noise(noiseX, noiseY, timeScale) + 1) / 2 * intensity;
+                    const noiseValue2 = (noise(noiseX * 2, noiseY * 2, timeScale * 1.5) + 1) / 2 * intensity;
                     
                     const irregularShape = Math.sin(y * 0.02 + noiseValue2 * 5 + timeScale) * 0.2 + 0.5;
                     const diagonalGradient = ((x + moveX) / canvas.width + (y + moveY) / canvas.height) / 2;
