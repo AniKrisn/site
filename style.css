@@ -127,7 +127,7 @@ body.dark-mode::before {
 .about-text {
     padding-top: 2px;
     padding-left: 10px;
-    width: 50%;
+    width: 65ch;
 }
 
 #canvas-container {
@@ -369,7 +369,7 @@ body.dark-mode .line {
         margin-left: 0;
     }
 
-    #essay {
+    #essay, .about-text {
         padding-left: 2%;
         padding-right: 2%;
     }
@@ -381,7 +381,7 @@ body.dark-mode .line {
         margin-left: 7px;
     }
 
-    .essay {
+    .essay, .about-text {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -417,4 +417,14 @@ body.dark-mode .line {
         object-fit: fill;
     }
 
+}
+
+@media (width < 820px) {
+    .backbutton {
+        padding-left: 5%;
+    }
+
+    .about-text {
+        max-width: 40ch;
+    }
 }
