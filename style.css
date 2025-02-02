@@ -127,6 +127,7 @@ body.dark-mode::before {
 .about-text {
     padding-top: 2px;
     padding-left: 10px;
+    width: 50%;
 }
 
 #canvas-container {

@@ -67,6 +67,26 @@
                 display: inline;
             }
         }
+        .definition-text {
+            position: fixed;
+            top: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: monospace;
+            font-size: 14px;
+            color: #333;
+            pointer-events: none;
+            z-index: 1000;
+            text-align: center;
+        }
+        .def-1, .def-2 {
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .def-2 {
+            opacity: 0;
+            transition: opacity 0.1s ease;
+        }
     </style>
 </head>
 <body>
@@ -76,6 +96,11 @@
         <span class="mobile-dot" style="font-family: monospace; color: rgb(248,49,47);">&bull;</span>
     </div>
     <div class="scroll-text"><a href="index.html">ZOOM</a></div>
+    <div class="definition-text">
+        /zuːm/<br>
+        verb<br>
+        <span class="definition">1. move or travel very quickly.</span>
+    </div>
     <script>
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
@@ -132,6 +157,9 @@
                         textOpacity = Math.max(0, Math.min(1, (scale - 2) / 1.5));
                         textOverlay.style.opacity = textOpacity;
                         
+                        // Update definition with scramble
+                        definitionSpan.textContent = scrambleText(def1, def2, progress);
+                        
                         if (progress < 1) {
                             requestAnimationFrame(scrollOut);
                         }
@@ -161,6 +189,9 @@
                 visualOpacity = Math.max(0, 1 - (scale - 1) / 2);
                 textOpacity = Math.max(0, Math.min(1, (scale - 2) / 1.5));
                 textOverlay.style.opacity = textOpacity;
+                
+                // Update definition with scramble
+                definitionSpan.textContent = scrambleText(def2, def1, progress);
                 
                 if (progress < 1) {
                     requestAnimationFrame(scroll);
@@ -332,6 +363,46 @@
             ctx.restore();
         }
 
+        const definitionSpan = document.querySelector('.definition');
+        const def1 = "1. move or travel very quickly.";
+        const def2 = "2. (of a camera or user) change smoothly from a long shot to a close-up or vice versa.";
+        let currentDef = def1;
+        let isScrambling = false;
+        
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        
+        function scrambleText(targetText, startText, progress) {
+            // Adjust progress to complete at 60% of the zoom duration
+            const scrambleProgress = Math.min(progress / 0.60, 1);
+            
+            let result = '';
+            const targetLength = Math.floor(startText.length + (targetText.length - startText.length) * scrambleProgress);
+            
+            for (let i = 0; i < targetLength; i++) {
+                if (targetText[i] === ' ' || scrambleProgress === 1) {
+                    result += targetText[i] || ' ';
+                } else {
+                    result += chars[Math.floor(Math.random() * chars.length)];
+                }
+            }
+            return result;
+        }
+
+        function updateDefinition() {
+            const targetDef = textOpacity > 0.5 ? def2 : def1;
+            
+            if (currentDef !== targetDef && !isScrambling) {
+                isScrambling = true;
+                scrambleText(targetDef, def1, textOpacity);
+                if (textOpacity > 0.5) {
+                    currentDef = def2;
+                } else {
+                    currentDef = def1;
+                }
+                isScrambling = false;
+            }
+        }
+
         function animate() {
             // Calculate background color based on scale
             const progress = Math.min((scale - 1) / 2, 1);  // Full transition by scale 3
@@ -347,6 +418,11 @@
             
             drawGrid();
             drawDots();
+            
+            // Update definition text based on zoom
+            if (scale > 1) {
+                updateDefinition();
+            }
             
             requestAnimationFrame(animate);
         }
