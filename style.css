@@ -425,6 +425,6 @@ body.dark-mode .line {
     }
 
     .about-text {
-        max-width: 40ch;
+        max-width: 80vw;
     }
 }
