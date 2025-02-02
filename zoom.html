@@ -97,7 +97,7 @@
     </div>
     <div class="scroll-text"><a href="index.html">ZOOM</a></div>
     <div class="definition-text">
-        /zuːm/<br>
+        /zu:m/<br>
         verb<br>
         <span class="definition">1. move or travel very quickly.</span>
     </div>
@@ -135,7 +135,7 @@
                 const centerY = canvas.height / 2;
                 
                 // If clicking near center where dot is, zoom out
-                const clickRadius = 50; // Adjust this value as needed
+                const clickRadius = 3500; // Adjust this value as needed
                 const distanceFromCenter = Math.sqrt(
                     Math.pow(x - centerX, 2) + 
                     Math.pow(y - centerY, 2)
@@ -170,7 +170,7 @@
                 }
             }
 
-            const duration = 900;
+            const duration = 750;
             const startTime = performance.now();
             const startScale = scale;
             
@@ -234,7 +234,7 @@
 
         function drawGrid() {
             const shapeProgress = Math.max(0, (scale - 2) / 3); // Start transform at scale 2, complete by scale 5
-            const gridSize = 100 * (1 - shapeProgress * 9); // Shrink more gradually
+            const gridSize = 100 * (1 - shapeProgress * 5); // Shrink more gradually
             
             ctx.strokeStyle = `rgba(255, 92, 10, ${visualOpacity})`; // 255,92,10 (darker)  253,112,20 (lighter)
             ctx.lineWidth = 1;
@@ -365,7 +365,7 @@
 
         const definitionSpan = document.querySelector('.definition');
         const def1 = "1. move or travel very quickly.";
-        const def2 = "2. (of a camera or user) change smoothly from a long shot to a close-up or vice versa.";
+        const def2 = "2. change smoothly from a long shot to a close-up or vice versa.";
         let currentDef = def1;
         let isScrambling = false;
         
