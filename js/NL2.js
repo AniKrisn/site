@@ -58,49 +58,59 @@
             );
         }
 
-        // Record the start time for the animation
-        const startTime = performance.now();
+        // Array to store active particles
+        const particles = [];
+        const MAX_PARTICLES = 1000; // Adjust this number to control density
 
         function drawNorthernLights(time) {
-            const elapsed = performance.now() - startTime;
-            // ?
-            const fadeAlpha = elapsed > 1000 ? 0.01 : 0.05;
-            ctx.fillStyle = `rgba(10, 5, 20, ${fadeAlpha})`;
+            ctx.fillStyle = 'rgba(10, 5, 20, 0.03)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Only draw noise shapes for the first 9 seconds.
-            if (elapsed < 9000) {
-                // half as fast on mobile screens because the speed is calculated with screen width
-                const timeScale = time * (window.innerWidth < 768 ? 0.001 : 0.002);
-                const moveX = Math.sin(timeScale * 0.5) * canvas.width * 0.2;
-                const moveY = Math.cos(timeScale * 0.3) * canvas.height * 0.1;
+            const timeScale = time * (window.innerWidth < 768 ? 0.004 : 0.002);
+            const moveX = Math.sin(timeScale * 0.5) * canvas.width * 0.2;
+            const moveY = Math.cos(timeScale * 0.3) * canvas.height * 0.1;
 
-                const intensity = 0.95;
-                const hueIncrement = 0.13; // Slow hue increase
+            // Remove particles that are too old
+            while (particles.length > MAX_PARTICLES) {
+                particles.shift();
+            }
 
-                for (let x = 0; x < canvas.width; x += 3) {
-                    for (let y = 0; y < canvas.height; y += 3) {
-                        const noiseX = (x + moveX) * 0.002;
-                        const noiseY = (y + moveY) * 0.003;
-                        const noiseValue = (noise(noiseX, noiseY, timeScale) + 1) / 2 * intensity;
-                        const noiseValue2 = (noise(noiseX * 2, noiseY * 2, timeScale * 1.5) + 1) / 2 * intensity;
-                        
-                        const irregularShape = Math.sin(y * 0.02 + noiseValue2 * 5 + timeScale) * 0.2 + 0.5;
-                        const diagonalGradient = ((x + moveX) / canvas.width + (y + moveY) / canvas.height) / 2;
-                        
-                        if (noiseValue > 0.55 && 
-                            diagonalGradient > irregularShape - 0.1 && 
-                            diagonalGradient < irregularShape + 0.1) {
-                            const depth = (noiseValue2 - 0.5) * 3;
-                            const hue = (270 + depth * 110 + time * hueIncrement) % 180;
-                            const lightness = 20 + depth * 50;
-                            const alpha = (noiseValue - 0.55) * 2 * 0.20;
-                            ctx.fillStyle = `hsla(${hue}, 100%, ${lightness}%, ${alpha})`;
-                            ctx.fillRect(x, y, 3, 3);
-                        }
-                    }
+            // Create new particles
+            for (let i = 0; i < 1000; i++) { // Adjust number of particles per frame
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const noiseX = (x + moveX) * 0.002;
+                const noiseY = (y + moveY) * 0.003;
+                const noiseValue = (noise(noiseX, noiseY, timeScale) + 1) / 2 * 0.95;
+                const noiseValue2 = (noise(noiseX * 2, noiseY * 2, timeScale * 1.5) + 1) / 2 * 0.95;
+                
+                const irregularShape = Math.sin(y * 0.02 + noiseValue2 * 5 + timeScale) * 0.2 + 0.5;
+                const diagonalGradient = ((x + moveX) / canvas.width + (y + moveY) / canvas.height) / 2;
+                
+                if (noiseValue > 0.55 && 
+                    diagonalGradient > irregularShape - 0.1 && 
+                    diagonalGradient < irregularShape + 0.1) {
+                    const depth = (noiseValue2 - 0.5) * 3;
+                    const hue = (270 + depth * 110 + time * 0.06) % 360;
+                    const lightness = 20 + depth * 50;
+                    const alpha = (noiseValue - 0.55) * 2 * 0.20;
+                    
+                    particles.push({
+                        x,
+                        y,
+                        hue,
+                        lightness,
+                        alpha,
+                        size: 3
+                    });
                 }
             }
+
+            // Draw all particles
+            particles.forEach(particle => {
+                ctx.fillStyle = `hsla(${particle.hue}, 100%, ${particle.lightness}%, ${particle.alpha})`;
+                ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
+            });
 
             requestAnimationFrame(() => drawNorthernLights(time + 4));
         }
