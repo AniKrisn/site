@@ -59,7 +59,7 @@
         }
 
         function drawNorthernLights(time) {
-            ctx.fillStyle = 'rgba(10, 5, 20, 0.1)';
+            ctx.fillStyle = 'rgba(10, 5, 20, 0.03)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const timeScale = time * 0.004;

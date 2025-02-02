@@ -12,7 +12,7 @@ window.addEventListener('resize', resize);
 canvas.style.position = 'fixed';
 canvas.style.top = '0';
 canvas.style.left = '0';
-canvas.style.zIndex = '-1';  // This ensures it stays behind all other content
+canvas.style.zIndex = '1000';  // This ensures it stays behind all other content
 canvas.style.pointerEvents = 'none';  // This allows clicks to pass through to elements below
 
 class Star {
@@ -93,7 +93,7 @@ function initializeStars() {
         createStarCluster(
             Math.random() * canvas.width,
             Math.random() * canvas.height,
-            40,
+            15,
             200
         );
     }
