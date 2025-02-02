@@ -151,11 +151,11 @@
                 const progress = Math.min(elapsed / duration, 1);
                 
                 // Add easing function for acceleration
-                const easedProgress = progress < 0.7 
+                const easedProgress = progress < 0.4 
                     ? 2 * progress * progress 
                     : 1 - Math.pow(-2 * progress + 2, 2) / 2;
                 
-                scale = startScale + (10 - startScale) * easedProgress;
+                scale = startScale + (3 - startScale) * easedProgress + 1;
                 
                 // Update opacities
                 visualOpacity = Math.max(0, 1 - (scale - 1) / 2);
