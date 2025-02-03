@@ -64,19 +64,19 @@
         function drawNorthernLights(time) {
             const elapsed = performance.now() - startTime;
             // ?
-            const fadeAlpha = elapsed > 1000 ? 0.01 : 0.05;
+            const fadeAlpha = elapsed > 15000 ? 0.03 : 0.05;
             ctx.fillStyle = `rgba(10, 5, 20, ${fadeAlpha})`;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Only draw noise shapes for the first 9 seconds.
-            if (elapsed < 9000) {
+            // Only draw noise shapes for the first 20 seconds.
+            if (elapsed < 20000) {
                 // half as fast on mobile screens because the speed is calculated with screen width
-                const timeScale = time * (window.innerWidth < 768 ? 0.001 : 0.002);
+                const timeScale = time * (window.innerWidth < 768 ? 0.001 : 0.003);
                 const moveX = Math.sin(timeScale * 0.5) * canvas.width * 0.2;
                 const moveY = Math.cos(timeScale * 0.3) * canvas.height * 0.1;
 
-                const intensity = 0.95;
-                const hueIncrement = 0.13; // Slow hue increase
+                const intensity = 0.94;
+                const hueIncrement = 0.09; // Slow hue increase
 
                 for (let x = 0; x < canvas.width; x += 3) {
                     for (let y = 0; y < canvas.height; y += 3) {
