@@ -93,7 +93,7 @@ function initializeStars() {
         createStarCluster(
             Math.random() * canvas.width,
             Math.random() * canvas.height,
-            15,
+            50,
             200
         );
     }
