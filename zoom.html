@@ -179,8 +179,8 @@
                 const progress = Math.min(elapsed / duration, 1);
                 
                 // Add easing function for acceleration
-                const easedProgress = progress < 0.4 
-                    ? 2 * progress * progress 
+                const easedProgress = progress < 0.6
+                    ? 2 * progress * 0.65
                     : 1 - Math.pow(-2 * progress + 2, 2) / 2;
                 
                 scale = startScale + (3 - startScale) * easedProgress + 1;
@@ -201,7 +201,7 @@
             requestAnimationFrame(scroll);
         });
 
-        // Add zoom handling
+        /*
         window.addEventListener('wheel', (e) => {
             const zoomSpeed = 0.004;
             scale += e.deltaY * zoomSpeed * 1.2;
@@ -214,6 +214,7 @@
             textOpacity = Math.max(0, Math.min(1, (scale - 2) / 1.5));
             textOverlay.style.opacity = textOpacity;
         });
+        */
 
         const dots = [];
         const numberOfDots = 16;
