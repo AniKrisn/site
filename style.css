@@ -129,7 +129,17 @@ body.dark-mode::before {
     padding-left: 10px;
     width: 65ch;
     color: #FFF7D1;
-    opacity: 0.9;
+    opacity: 0;
+    animation: fadeIn 1.7s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 #canvas-container {
