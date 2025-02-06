@@ -6,6 +6,47 @@
     <title>akrishnan</title>
     <link rel="preload" href="assets/gradient.png" as="image">
     <link rel="stylesheet" href="style.css">
+    <style>
+        @media (max-width: 768px) {
+            html, body {
+                height: 100%;
+                overflow: hidden;
+                margin: 0;
+                position: relative;
+            }
+            /* Create a pseudo-element for the background image effect */
+            body::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('assets/grad6.png'); /* adjust the path if needed */
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                opacity: 0;
+                animation: fadeInBackground 3s forwards;
+                z-index: -1;
+            }
+
+            @keyframes fadeInBackground {
+                from { opacity: 0; }
+                to { opacity: 0.6; }
+            }
+
+            /* Fade-out effect when .fading-out is added to the body */
+            body.fading-out::before {
+                animation: fadeOutBackground 0.3s forwards;
+            }
+
+            @keyframes fadeOutBackground {
+                from { opacity: 0.6; }
+                to   { opacity: 0; }
+            }
+        }
+    </style>
 </head>
 <body class="index-page">
     <main>
@@ -33,6 +74,30 @@
     </main>
 
     <script src="js/lorenz.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Only apply these effects for mobile screens
+        if (window.innerWidth <= 768) {
+            // Here, we attach a fade-out transition to all links that have an href.
+            // You may adjust the selector if you only want it for specific links.
+            var links = document.querySelectorAll('a[href]');
+            links.forEach(function(link) {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault(); // Stop immediate navigation.
+                    var destination = this.href; // Store the target URL.
+                    
+                    // Add the "fading-out" class to trigger the fade-out animation.
+                    document.body.classList.add("fading-out");
+            
+                    // Wait shortly for the animation to finish before navigating.
+                    setTimeout(function() {
+                        window.location.href = destination;
+                    }, 200);
+                });
+            });
+        }
+    });
+    </script>
 
 </body>
 </html>
