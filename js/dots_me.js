@@ -69,13 +69,13 @@
             const frequency = 0.02; // controls how wavy the edge is
 
             // Instead of iterating x first, iterate over y and compute a dynamic x start:
-            for (let y = 0; y < canvas.height; y += 50) {
+            for (let y = 0; y < canvas.height; y += 100) {
                 // Compute a curved offset for x, optionally including timeScale for animation
                 const curveOffset = Math.sin(y * frequency + timeScale) * amplitude;
                 // Optionally clamp the start value if needed:
                 const startX = Math.max(0, baseStartX + curveOffset);
                 
-                for (let x = startX; x < canvas.width; x += 50) {
+                for (let x = startX; x < canvas.width; x += 150) {
                     const noiseX = (x + moveX) * 0.002;
                     const noiseY = (y + moveY) * 0.003;
                     const noiseValue = (noise(noiseX, noiseY, timeScale) + 1) / 2 * 0.95;
@@ -109,3 +109,24 @@
         setupNorthernLights();
     }
 })();
+
+// Wait until the DOM is fully loaded to attach the event listener.
+document.addEventListener("DOMContentLoaded", function() {
+    // Select the link that leads to index.html on me.html.
+    var indexLink = document.querySelector('a[href="index.html"]');
+    
+    if (indexLink) {
+      indexLink.addEventListener("click", function(e) {
+        e.preventDefault(); // Prevent the immediate navigation.
+        var destination = this.href; // Store the target URL ("index.html").
+        
+        // Add the fading-out class to trigger the reverse fade-out animation.
+        document.body.classList.add("fading-out");
+  
+        // Wait for the animation to finish (500ms) before navigating.
+        setTimeout(function() {
+            window.location.href = destination;
+        }, 350);  // 500ms must match the CSS animation duration.
+      });
+    }
+  });

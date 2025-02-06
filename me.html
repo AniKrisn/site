@@ -22,7 +22,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('assets/gradient.png');
+            background-image: url('assets/grad4.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -33,7 +33,17 @@
 
         @keyframes fadeInBackground {
             from { opacity: 0; }
-            to { opacity: 0.35; }
+            to { opacity: 0.6; }
+        }
+
+        /* Trigger fade-out when .fading-out is added to the body */
+        body.fading-out::before {
+            animation: fadeOutBackground 0.5s forwards;
+        }
+
+        @keyframes fadeOutBackground {
+            from { opacity: 0.6; }
+            to   { opacity: 0; }
         }
     </style>
 </head>
@@ -43,14 +53,11 @@
         
         <div>
             Interested in <br>
-            &emsp;growth <br>
             &emsp;human-computer interaction <br>
-            &emsp;analog synthesisers <br>
             &emsp;qualia/meditation research <br>
-            &emsp;category theory <br>
+            &emsp;type theory/category theory <br>
+            &emsp;analog synthesis <br>
         </div>
-        
-        <canvas id="starField"></canvas>
         
     </main>
 
