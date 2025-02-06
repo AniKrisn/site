@@ -130,7 +130,8 @@ body.dark-mode::before {
     width: 65ch;
     color: #FFF7D1;
     opacity: 0;
-    animation: fadeIn 1.7s forwards;
+    animation: fadeIn 4s forwards;
+    animation-delay: 0.7s;
 }
 
 @keyframes fadeIn {
