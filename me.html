@@ -5,20 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>akrishnan</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+        }
+        body {
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('assets/gradient.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            animation: fadeInBackground 3s forwards;
+            z-index: -1;
+        }
+
+        @keyframes fadeInBackground {
+            from { opacity: 0; }
+            to { opacity: 0.35; }
+        }
+    </style>
 </head>
 <body>
     <main>
-        <div class="name"><span class="flashing-cursor">|</span><a class="backbutton" href="index.html">Ani Krishnan</a></div>
+        <div class="name"><span class="flashing-cursor">|</span><a href="index.html">Ani Krishnan</a></div>
         
         <div>
-            Interested in Human-AI interaction. <br>
-
+            Interested in <br>
+            &emsp;growth <br>
+            &emsp;human-computer interaction <br>
+            &emsp;analog synthesisers <br>
+            &emsp;qualia/meditation research <br>
+            &emsp;category theory <br>
         </div>
         
         <canvas id="starField"></canvas>
         
     </main>
 
-    <script src="js/dots.js"></script>
+    <script src="js/dots_me.js"></script>
 </body>
 </html>
