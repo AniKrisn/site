@@ -38,7 +38,7 @@
 
         /* Trigger fade-out when .fading-out is added to the body */
         body.fading-out::before {
-            animation: fadeOutBackground 0.5s forwards;
+            animation: fadeOutBackground 0.3s forwards;
         }
 
         @keyframes fadeOutBackground {
@@ -61,6 +61,28 @@
         
     </main>
 
-    <script src="js/dots_me.js"></script>
+    <script>
+        // Wait until the DOM is fully loaded to attach the event listener.
+        document.addEventListener("DOMContentLoaded", function() {
+            // Select the link that leads to index.html on me.html.
+            var indexLink = document.querySelector('a[href="index.html"]');
+            
+            if (indexLink) {
+            indexLink.addEventListener("click", function(e) {
+                e.preventDefault(); // Prevent the immediate navigation.
+                var destination = this.href; // Store the target URL ("index.html").
+                
+                // Add the fading-out class to trigger the reverse fade-out animation.
+                document.body.classList.add("fading-out");
+        
+                setTimeout(function() {
+                    window.location.href = destination;
+                }, 200);  
+            });
+            }
+        });
+
+
+    </script>
 </body>
 </html>

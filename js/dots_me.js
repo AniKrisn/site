@@ -110,23 +110,3 @@
     }
 })();
 
-// Wait until the DOM is fully loaded to attach the event listener.
-document.addEventListener("DOMContentLoaded", function() {
-    // Select the link that leads to index.html on me.html.
-    var indexLink = document.querySelector('a[href="index.html"]');
-    
-    if (indexLink) {
-      indexLink.addEventListener("click", function(e) {
-        e.preventDefault(); // Prevent the immediate navigation.
-        var destination = this.href; // Store the target URL ("index.html").
-        
-        // Add the fading-out class to trigger the reverse fade-out animation.
-        document.body.classList.add("fading-out");
-  
-        // Wait for the animation to finish (500ms) before navigating.
-        setTimeout(function() {
-            window.location.href = destination;
-        }, 350);  // 500ms must match the CSS animation duration.
-      });
-    }
-  });
