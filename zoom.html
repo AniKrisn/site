@@ -374,7 +374,7 @@
         
         function scrambleText(targetText, startText, progress) {
             // Adjust progress to complete at 60% of the zoom duration
-            const scrambleProgress = Math.min(progress / 0.60, 1);
+            const scrambleProgress = Math.min(progress / 0.6, 1);
             
             let result = '';
             const targetLength = Math.floor(startText.length + (targetText.length - startText.length) * scrambleProgress);
