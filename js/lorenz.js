@@ -46,6 +46,39 @@ const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 document.body.appendChild(canvas);
 
+// --- Bernoulli Percolation parameters --- //
+const applyPercolationMask = true;   // Toggle to apply the percolation grid mask to the stars
+const showPercolationGrid = false;     // Toggle to also draw the grid overlay
+const cellSize = 7;                   // Size (in pixels) of each grid cell
+const percolationProbability = 0.8;    // Probability for a cell to be "open"
+let percolationGrid = [];              // The grid (2D array) that will be generated
+
+// Generate a new Bernoulli percolation grid based on current canvas dimensions
+function generatePercolationGrid() {
+    const cols = Math.ceil(canvas.width / cellSize);
+    const rows = Math.ceil(canvas.height / cellSize);
+    percolationGrid = [];
+    for (let r = 0; r < rows; r++) {
+        const row = [];
+        for (let c = 0; c < cols; c++) {
+            row.push(Math.random() < percolationProbability);
+        }
+        percolationGrid.push(row);
+    }
+}
+
+// If you wish to see the grid itself, you can draw an overlay:
+function drawPercolationGrid() {
+    for (let r = 0; r < percolationGrid.length; r++) {
+        for (let c = 0; c < percolationGrid[r].length; c++) {
+            const x = c * cellSize;
+            const y = r * cellSize;
+            ctx.strokeStyle = percolationGrid[r][c] ? 'rgba(0,255,0,0.3)' : 'rgba(255,0,0,0.3)';
+            ctx.strokeRect(x, y, cellSize, cellSize);
+        }
+    }
+}
+
 let rotateX = 24;
 let rotateY = -18;
 let rotateZ = -44;
@@ -56,9 +89,13 @@ let lastY = 0;
 const resizeCanvas = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    generatePercolationGrid(); // Refresh the percolation grid on resize
 };
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+
+// Update the percolation grid
+setInterval(generatePercolationGrid, 12);
 
 // Lorenz parameters
 const sigma = 11;
@@ -188,7 +225,7 @@ function draw() {
     ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
     
     for (let i = 0; i < points.length; i++) {
-        const point = rotatePoint({...points[i]});
+        const point = rotatePoint({ ...points[i] });
         
         // Add glitch effect using Perlin noise
         const glitchX = noise(point.x * 0.1, point.y * 0.1, time) * 0.65;
@@ -198,6 +235,24 @@ function draw() {
         const screenX = centerX + (point.x + glitchX) * scale;
         const screenY = centerY + (point.y + glitchY) * scale;
         
+        // --- Apply Bernoulli percolation mask --- //
+        if (applyPercolationMask) {
+            const cellX = Math.floor(screenX / cellSize);
+            const cellY = Math.floor(screenY / cellSize);
+            // Validate that the computed cell is within our grid bounds:
+            if (
+                cellY < 0 ||
+                cellY >= percolationGrid.length ||
+                cellX < 0 ||
+                cellX >= percolationGrid[0].length
+            ) {
+                continue; // Skip drawing if outside
+            }
+            if (!percolationGrid[cellY][cellX]) {
+                continue; // Skip drawing star if the cell is "closed"
+            }
+        }
+        
         ctx.fillStyle = points[i].color;
         ctx.globalAlpha = (i / points.length) * 0.8 + 0.2;
         
@@ -205,6 +260,11 @@ function draw() {
         ctx.fill();
     }
     ctx.globalAlpha = 1;
+    
+    // Optionally draw the percolation grid overlay.
+    if (showPercolationGrid) {
+        drawPercolationGrid();
+    }
 }
 
 
