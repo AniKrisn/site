@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>akrishnan</title>
     <link rel="preload" href="assets/gradient.png" as="image">
+    <link rel="preload" href="assets/indexgrad.png" as="image">
     <link rel="stylesheet" href="style.css">
     <style>
         @media (max-width: 768px) {
             html, body {
                 height: 100%;
-                overflow: hidden;
                 margin: 0;
-                position: relative;
             }
             /* Create a pseudo-element for the background image effect */
             body::before {
@@ -67,6 +66,8 @@
             <div><a href="sim2/s.html">2D Audio Sim</a></div>
             <div><a href="hunt.html">Hunt (Game)</a></div>
             <div><a href="QuickNote/qc.html">QuickNote</a></div>
+            —
+            <div><a href="ptok.html">PaperTok</a></div>
         </ol>
 
 
@@ -75,6 +76,9 @@
 
     <script src="js/lorenz.js"></script>
     <script>
+
+    /* for mobile */     
+
     document.addEventListener("DOMContentLoaded", function() {
         // Only apply these effects for mobile screens
         if (window.innerWidth <= 768) {
@@ -97,6 +101,7 @@
             });
         }
     });
+
     </script>
 
 </body>
