@@ -53,8 +53,10 @@ details > summary h2 {
   margin: 0;
 }
 
-.index-page {
-    overflow: hidden;
+@media screen and (min-height: 650px) {
+    .index-page {
+        overflow: hidden;
+    }
 }
 
 .photo-page {
