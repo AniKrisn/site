@@ -4,17 +4,18 @@
 //new:
 //const SPEED = 75;
 //const percolationProbability = 0.43;    // Probability for a cell to be "open"
+/*
 const DEFAULT_SPEED = 75;
-const DEFAULT_PERCOLATION = 0.15;
+const DEFAULT_PERCOLATION = 0.1;
 const HOVER_SPEED = 10;
 const HOVER_PERCOLATION = 0.99;
+*/
 
-/*
 const DEFAULT_SPEED = 10;
-const DEFAULT_PERCOLATION = 0.99;
+const DEFAULT_PERCOLATION = 0.9;
 const HOVER_SPEED = 75;
 const HOVER_PERCOLATION = 0.36;
-*/
+
 
 
 
@@ -94,7 +95,7 @@ let targetSpeed = DEFAULT_SPEED;
 let targetProbability = DEFAULT_PERCOLATION;
 
 // lerp transition speed
-const TRANSITION_RATE = 0.1;
+const TRANSITION_RATE = 0.1 * 0.6;
 
 // Add mouse position tracking
 let mouseX = 0;
@@ -133,6 +134,7 @@ document.querySelectorAll('a').forEach(link => {
         targetProbability = DEFAULT_PERCOLATION;
     });
 });
+
 
 // If you wish to see the grid itself, you can draw an overlay:
 function drawPercolationGrid() {
