@@ -4,18 +4,18 @@
 //new:
 //const SPEED = 75;
 //const percolationProbability = 0.43;    // Probability for a cell to be "open"
-/*
+
 const DEFAULT_SPEED = 75;
 const DEFAULT_PERCOLATION = 0.1;
 const HOVER_SPEED = 10;
 const HOVER_PERCOLATION = 0.99;
-*/
 
+/*
 const DEFAULT_SPEED = 10;
 const DEFAULT_PERCOLATION = 0.9;
 const HOVER_SPEED = 0;
 const HOVER_PERCOLATION = 0.001;
-
+*/
 
 
 
