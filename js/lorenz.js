@@ -9,6 +9,9 @@ const DEFAULT_SPEED = 75;
 const DEFAULT_PERCOLATION = 0.1;
 const HOVER_SPEED = 10;
 const HOVER_PERCOLATION = 0.99;
+const DEAD_SPEED = 200;
+const DEAD_PERCOLATION = 0;
+const TOGGLE_ON = 1200;
 
 /*
 const DEFAULT_SPEED = 10;
@@ -95,7 +98,7 @@ let targetSpeed = DEFAULT_SPEED;
 let targetProbability = DEFAULT_PERCOLATION;
 
 // lerp transition speed
-const TRANSITION_RATE = 0.1 * 0.6;
+const TRANSITION_RATE = 0.1 * 0.8;
 
 // Add mouse position tracking
 let mouseX = 0;
@@ -336,9 +339,22 @@ function draw() {
     }
 }
 
+// AUTOMATIC TOGGLE 
+function getRandomToggleOff() {
+    return Math.floor(Math.random() * (800 - 200 + 1)) + 500;
+}
+
+function toggleMouseState() {
+    isMouseOnCanvas = !isMouseOnCanvas;
+    setTimeout(toggleMouseState, isMouseOnCanvas ? TOGGLE_ON : getRandomToggleOff());
+}
+
+toggleMouseState();
+
 
 function animate() {
-    // Update target values based on mouse position
+    // OLD SETTINGS //  
+    /* 
     if (isMouseOnCanvas) {
         const isRightHalf = mouseX > canvas.width / 2;
         targetSpeed = isRightHalf ? HOVER_SPEED : DEFAULT_SPEED;
@@ -349,10 +365,21 @@ function animate() {
     }
 
     if (isMouseOnCanvas && isMouseOnLink) {
+        targetSpeed = DEAD_SPEED;
+        targetProbability = DEAD_PERCOLATION;
+    }
+    */
+
+    if (isMouseOnCanvas) {
         targetSpeed = HOVER_SPEED;
         targetProbability = HOVER_PERCOLATION;
     }
-
+    
+    if (!isMouseOnCanvas) {
+        targetSpeed = DEAD_SPEED;
+        targetProbability = DEAD_PERCOLATION;
+    }
+    
     // Smoothly interpolate current values
     SPEED = lerp(SPEED, targetSpeed, TRANSITION_RATE);
     const newProbability = lerp(percolationProbability, targetProbability, TRANSITION_RATE);
