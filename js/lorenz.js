@@ -1,3 +1,14 @@
+//old:
+//percolationProbability = 0.8, SPEED = 12
+
+//new:
+//const SPEED = 75;
+//const percolationProbability = 0.43;    // Probability for a cell to be "open"
+const DEFAULT_SPEED = 10;
+const DEFAULT_PERCOLATION = 0.99;
+const HOVER_SPEED = 75;
+const HOVER_PERCOLATION = 0.36;
+
 // Perlin Noise
 const noise = (() => {
     const permutation = new Array(256).fill(0).map(() => Math.floor(Math.random() * 256));
@@ -50,8 +61,8 @@ document.body.appendChild(canvas);
 const applyPercolationMask = true;   // Toggle to apply the percolation grid mask to the stars
 const showPercolationGrid = false;     // Toggle to also draw the grid overlay
 const cellSize = 7;                   // Size (in pixels) of each grid cell
-const percolationProbability = 0.8;    // Probability for a cell to be "open"
 let percolationGrid = [];              // The grid (2D array) that will be generated
+
 
 // Generate a new Bernoulli percolation grid based on current canvas dimensions
 function generatePercolationGrid() {
@@ -66,6 +77,53 @@ function generatePercolationGrid() {
         percolationGrid.push(row);
     }
 }
+
+// Create variables that will be modified
+let SPEED = DEFAULT_SPEED;
+let percolationProbability = DEFAULT_PERCOLATION;
+let targetSpeed = DEFAULT_SPEED;
+let targetProbability = DEFAULT_PERCOLATION;
+
+// Transition speed (0-1, higher = faster)
+const TRANSITION_RATE = 0.25;
+
+// Add mouse position tracking
+let mouseX = 0;
+let mouseY = 0;
+let isMouseOnCanvas = false;
+
+// Smooth interpolation function
+function lerp(start, end, t) {
+    return start + (end - start) * t;
+}
+
+// Update mouse position when moving
+document.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+    isMouseOnCanvas = true;
+});
+
+document.addEventListener('mouseleave', () => {
+    isMouseOnCanvas = false;
+});
+
+// Track if mouse is over a link
+let isMouseOnLink = false;
+
+document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('mouseenter', () => {
+        isMouseOnLink = true;
+        targetSpeed = HOVER_SPEED;
+        targetProbability = HOVER_PERCOLATION;
+    });
+    link.addEventListener('mouseleave', () => {
+        isMouseOnLink = false;
+        targetSpeed = DEFAULT_SPEED;
+        targetProbability = DEFAULT_PERCOLATION;
+    });
+});
 
 // If you wish to see the grid itself, you can draw an overlay:
 function drawPercolationGrid() {
@@ -95,7 +153,7 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 // Update the percolation grid
-setInterval(generatePercolationGrid, 12);
+setInterval(generatePercolationGrid, SPEED);
 
 // Lorenz parameters
 const sigma = 11;
@@ -268,11 +326,41 @@ function draw() {
 }
 
 
+
+
+
 function animate() {
+    // Update target values based on mouse position
+    if (isMouseOnCanvas) {
+        const isRightHalf = mouseX > canvas.width / 2;
+        targetSpeed = isRightHalf ? HOVER_SPEED : DEFAULT_SPEED;
+        targetProbability = isRightHalf ? HOVER_PERCOLATION : DEFAULT_PERCOLATION;
+    } else {
+        targetSpeed = DEFAULT_SPEED;
+        targetProbability = DEFAULT_PERCOLATION;
+    }
+
+    if (isMouseOnCanvas && isMouseOnLink) {
+        targetSpeed = HOVER_SPEED;
+        targetProbability = HOVER_PERCOLATION;
+    }
+
+    // Smoothly interpolate current values
+    SPEED = lerp(SPEED, targetSpeed, TRANSITION_RATE);
+    const newProbability = lerp(percolationProbability, targetProbability, TRANSITION_RATE);
+    
+    // Only regenerate grid if probability changed significantly
+    if (Math.abs(newProbability - percolationProbability) > 0.01) {
+        percolationProbability = newProbability;
+        generatePercolationGrid();
+    }
+
+
     updateLorenz();
     draw();
     requestAnimationFrame(animate);
 }
+
 
 
 function handleResize() {
