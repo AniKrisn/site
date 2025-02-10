@@ -4,10 +4,19 @@
 //new:
 //const SPEED = 75;
 //const percolationProbability = 0.43;    // Probability for a cell to be "open"
+const DEFAULT_SPEED = 75;
+const DEFAULT_PERCOLATION = 0.15;
+const HOVER_SPEED = 10;
+const HOVER_PERCOLATION = 0.99;
+
+/*
 const DEFAULT_SPEED = 10;
 const DEFAULT_PERCOLATION = 0.99;
 const HOVER_SPEED = 75;
 const HOVER_PERCOLATION = 0.36;
+*/
+
+
 
 // Perlin Noise
 const noise = (() => {
@@ -84,8 +93,8 @@ let percolationProbability = DEFAULT_PERCOLATION;
 let targetSpeed = DEFAULT_SPEED;
 let targetProbability = DEFAULT_PERCOLATION;
 
-// Transition speed (0-1, higher = faster)
-const TRANSITION_RATE = 0.25;
+// lerp transition speed
+const TRANSITION_RATE = 0.1;
 
 // Add mouse position tracking
 let mouseX = 0;
@@ -326,9 +335,6 @@ function draw() {
 }
 
 
-
-
-
 function animate() {
     // Update target values based on mouse position
     if (isMouseOnCanvas) {
@@ -355,13 +361,13 @@ function animate() {
         generatePercolationGrid();
     }
 
-
     updateLorenz();
     draw();
     requestAnimationFrame(animate);
 }
 
 
+// not for smaller screens!
 
 function handleResize() {
     if (window.innerWidth < 760) {
