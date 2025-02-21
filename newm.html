@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:wght@500&family=Parkinsans:wght@300..800&family=Sora:wght@100..800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #171719;
+      font-family: "Geist Mono", monospace;
+      font-weight: 500;
+    }
+
+    .device-frame {
+      position: relative;
+      width: 600px;
+      height: 520px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 35px;
+      background: #171717;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 
+        2px 4px 80px 38px rgba(0, 0, 0, 0.25),
+        2px 8px 25px 10px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+
+    .device-frame::before {
+      content: '';
+      position: absolute;
+      inset: 2.5px 2px 1px 1.5px;
+      border-radius: 32px;
+      border: 1.5px solid #1F2937;
+    }
+
+    .device-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 35px;
+      border: solid transparent;
+      border-width: 3px 2px 1px 2px;
+      background: linear-gradient(to bottom, #3C444F, #2A3039) border-box;
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) padding-box, 
+        linear-gradient(#fff 0 0);
+      mask: 
+        linear-gradient(#fff 0 0) padding-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .screen {
+      width: 454px;
+      height: 385px;
+      background-color: #D9D9D9;
+      border-radius: 20px;
+      border: 1px solid #000000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: inset 4px 4px 32px 9px rgba(0, 0, 0, 0.25);
+      animation: flicker 0.15s infinite, glitch 3s infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes flicker {
+      0% {
+        opacity: 0.97;
+      }
+      50% {
+        opacity: 0.95;
+      }
+      100% {
+        opacity: 0.97;
+      }
+    }
+
+    @keyframes glitch {
+      0% {
+        transform: translate(0);
+      }
+      1% {
+        transform: translate(-0.2px, 0.2px);
+      }
+      2% {
+        transform: translate(0.2px, -0.2px);
+      }
+      3% {
+        transform: translate(0);
+      }
+      98% {
+        transform: translate(0);
+      }
+      98.5% {
+        transform: translate(-0.2px, 0.2px);
+      }
+      99% {
+        transform: translate(0.2px, -0.2px);
+      }
+      99.5% {
+        transform: translate(0);
+      }
+    }
+
+    /* Add scanline effects */
+    .screen::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.15),
+          rgba(0, 0, 0, 0.15) 1px,
+          transparent 1px,
+          transparent 2px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.15),
+          rgba(0, 0, 0, 0.15) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+      pointer-events: none;
+      border-radius: 20px;
+      opacity: 0.1;
+    }
+
+    .screen-overlay {
+      position: absolute;
+      top: 67.5px;
+      width: 454px;
+      height: 385px;
+      border-radius: 20px;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: multiply;
+    }
+
+    .nav-text {
+      font-size: 16px;
+      color: #000;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .separator {
+      color: #666;
+    }
+
+    .dots {
+      position: absolute;
+      bottom: 22px;
+      display: flex;
+      gap: 7px;
+    }
+
+    /* Add RGB split effect */
+    .screen::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 1px,
+          rgba(255, 0, 0, 0.15) 1px,
+          rgba(0, 255, 0, 0.12) 2px,
+          rgba(0, 0, 255, 0.15) 3px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 1px,
+          rgba(255, 0, 0, 0.15) 1px,
+          rgba(0, 255, 0, 0.12) 2px,
+          rgba(0, 0, 255, 0.15) 3px
+        );
+      pointer-events: none;
+      border-radius: 20px;
+      mix-blend-mode: screen;
+      opacity: 0.7;
+    }
+
+    .construction-notice {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.7;
+      z-index: 100;
+      color: #666;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;    
+    }
+
+    a:hover {
+      color: #666;
+    }
+    
+    .one:hover{
+      color: #EA5455;
+    }
+    .two:hover{
+      color: #F07B3F;
+    }
+    .three:hover{
+      color: #FFEB00;
+    }
+    .four:hover{
+      color: #00B8A9;
+    }
+
+
+  </style>
+</head>
+<body>
+    <div class="device-frame">
+        <div class="screen">
+        <div class="nav-text"><a href="index.html">akrishnan</a></div>
+        <div class="nav-text"><span class="separator">|</span><a href="index.html" class="one">photo</a><span class="separator">|</span></div>
+        <div class="nav-text"><span class="separator">|</span><a href="index.html" class="two">reading</a><span class="separator">|</span></div>
+        <div class="nav-text"><span class="separator">|</span><a href="index.html" class="three">writing</a><span class="separator">|</span></div>
+        <div class="nav-text"><span class="separator">|</span><a href="index.html" class="four">build</a><span class="separator">|</span></div>
+        </div>
+        
+        <img src="assets/screen.png" alt="overlay" class="screen-overlay">
+        <div class="dots">
+            <div class="dot"><a href="index.html"><img src="assets/dot.svg"></a></div>
+            <div class="dot"><a href="index.html"><img src="assets/dot.svg"></a></div>
+            <div class="dot"><a href="index.html"><img src="assets/dot.svg"></a></div>
+            <div class="dot"><a href="index.html"><img src="assets/dot.svg"></a></div>
+        </div>
+    </div>
+
+    <div class="construction-notice">under construction</div>
+</body>
+</html>
