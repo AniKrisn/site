@@ -317,6 +317,12 @@
       }
 
       function createLorenzAttractor() {
+        // Remove existing canvas if it exists
+        const existingCanvas = document.querySelector('.lorenz-canvas');
+        if (existingCanvas) {
+          existingCanvas.remove();
+        }
+
         // Get the screen and preserve existing content
         const screen = document.querySelector('.screen');
         
@@ -332,6 +338,14 @@
         canvas.style.zIndex = '-1'; // Place behind text
         screen.insertBefore(canvas, screen.firstChild); // Insert at start to be behind text
 
+        const overlay = document.querySelector('.screen-overlay');
+
+        // Reset variables
+        let x = 0.7;
+        let y = 12;
+        let z = 0;
+        let blockCount = 0;
+        
         // De Stijl colors
         const colors = ['#E53935', '#1565C0', '#FBC02D', '#000000'];
         
@@ -340,10 +354,6 @@
         const rho = 28;
         const beta = 9/3;
         const dt = 0.01;
-        
-        let x = 0.7;
-        let y = 12;
-        let z = 0;
         
         function updatePoint() {
           const dx = sigma * (y - x) * dt;
@@ -358,23 +368,27 @@
         }
         
         function draw() {
+          if (blockCount >= 198) return; // Stop after 100 blocks
+          
           const point = updatePoint();
-          const scale = 3; // Increased scale for wider pattern
+          const scale = 20;
           const offsetX = canvas.width / 2;
           const offsetY = canvas.height / 1.15;
           
-          // Pick a random color for each point
           ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
           ctx.fillRect(
             offsetX + point.x * scale,
             offsetY + point.y * scale,
-            2,
-            2
+            10,
+            50
           );
+          
+          blockCount++; // Increment counter
         }
         
         function animate() {
           if (!document.querySelector('.lorenz-canvas')) return;
+          if (blockCount >= 198) return; // Stop animation after 100 blocks
           draw();
           requestAnimationFrame(animate);
         }
