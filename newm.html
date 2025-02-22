@@ -3,6 +3,8 @@
 <head>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:wght@500&family=Parkinsans:wght@300..800&family=Sora:wght@100..800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:wght@500&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Parkinsans:wght@300..800&family=Sora:wght@100..800&display=swap');
+
 
     * {
       margin: 0;
@@ -16,8 +18,9 @@
       justify-content: center;
       align-items: center;
       background-color: #171719;
-      font-family: "Geist Mono", monospace;
-      font-weight: 500;
+      font-family: "Josefin Sans", "Geist Mono", monospace;
+      font-weight: 400;
+      overflow: hidden;
     }
 
     .device-frame {
@@ -160,11 +163,12 @@
     }
 
     .nav-text {
-      font-size: 16px;
+      font-size: 20px;
       color: #000;
       display: flex;
       align-items: center;
       gap: 6px;
+      margin-bottom: 6px;
     }
 
     .separator {
@@ -242,10 +246,36 @@
       color: #344CB7;
     }
 
+    .background {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+      z-index: -1;
+    }
+
+    .block {
+      position: absolute;
+      background: var(--color);
+      width: var(--width, 100px);
+      height: var(--height, 100px);
+      transition: all 0.3s ease;
+      border: 5px solid black;
+    }
+
+    .block:hover {
+      width: calc(var(--width) * 1.2);
+      height: calc(var(--height) * 1.2);
+    }
+
 
   </style>
 </head>
 <body>
+  <div class="background"></div>
     <div class="device-frame">
         <div class="screen">
         <div class="nav-text"><a href="index.html">akrishnan</a></div>
@@ -265,5 +295,21 @@
     </div>
 
     <div class="construction-notice">under construction</div>
+
+    <script>
+      const colors = ['#E53935', '#1565C0', '#FBC02D', '#FFFFFF', '#000000'];
+      const background = document.querySelector('.background');
+  
+      for (let i = 0; i < 30; i++) {
+        const block = document.createElement('div');
+        block.classList.add('block');
+        block.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
+        block.style.setProperty('--width', `${Math.random() * 150 + 50}px`);
+        block.style.setProperty('--height', `${Math.random() * 150 + 50}px`);
+        block.style.left = `${Math.random() * 95}vw`;
+        block.style.top = `${Math.random() * 80}vh`;
+        background.appendChild(block);
+      }
+    </script>
 </body>
 </html>
