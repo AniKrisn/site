@@ -177,9 +177,10 @@
 
     .dots {
       position: absolute;
-      bottom: 22px;
+      right: 9px;
       display: flex;
-      gap: 7px;
+      flex-direction: column;
+      gap: 4px;
     }
 
     /* Add RGB split effect */
@@ -264,6 +265,8 @@
       height: var(--height, 100px);
       transition: all 0.3s ease;
       border: 5px solid black;
+      opacity: 0; /* Start invisible */
+      transition: opacity 0.5s ease, width 0.3s ease, height 0.3s ease; /* Add opacity transition */
     }
 
     .block:hover {
@@ -287,10 +290,8 @@
         
         <img src="assets/screen.png" alt="overlay" class="screen-overlay">
         <div class="dots">
-            <div class="dot"><a href="index.html" class="first-dot"><img src="assets/dot.svg"></a></div>
-            <div class="dot"><a href="index.html" class="second-dot"><img src="assets/dot.svg"></a></div>
-            <div class="dot"><a href="index.html" class="third-dot"><img src="assets/dot.svg"></a></div>
-            <div class="dot"><a href="index.html" class="fourth-dot"><img src="assets/dot.svg"></a></div>
+            <div class="first-dot"><img src="assets/RightBtn.svg"></div>
+            <div class="second-dot"><img src="assets/LeftBtn.svg"></div>
         </div>
     </div>
 
@@ -302,9 +303,11 @@
       
       function createDeStijlBlocks() {
         background.innerHTML = '';
-        const gridSize = 200; // Size of each grid cell
-        const grid = Array(10).fill().map(() => Array(10).fill(false)); 
+        const gridSize = 200;
+        const grid = Array(10).fill().map(() => Array(10).fill(false));
+        const blocks = []; // Store blocks for animation
         
+        // Create all blocks first but don't show them
         for (let i = 0; i < 50; i++) {
           const row = Math.floor(Math.random() * 10);
           const col = Math.floor(Math.random() * 10);
@@ -318,8 +321,16 @@
             block.style.left = `${col * gridSize + Math.random() * 50}px`;
             block.style.top = `${row * gridSize + Math.random() * 50}px`;
             background.appendChild(block);
+            blocks.push(block);
           }
         }
+        
+        // Animate blocks one by one
+        blocks.forEach((block, index) => {
+          setTimeout(() => {
+            block.style.opacity = '1';
+          }, index * 50); // 50ms delay between each block
+        });
       }
 
       function createLorenzAttractor() {
