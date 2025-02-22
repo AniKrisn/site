@@ -183,6 +183,22 @@
       gap: 4px;
     }
 
+    /* Add button animation styles */
+    .first-dot, .second-dot {
+      cursor: pointer;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .first-dot:active, .second-dot:active {
+      transform: scale(0.9) translateY(1px);
+      filter: brightness(0.9);
+    }
+
+    /* Optional hover effect */
+    .first-dot:hover, .second-dot:hover {
+      filter: brightness(1.1);
+    }
+
     /* Add RGB split effect */
     .screen::after {
       content: "";
