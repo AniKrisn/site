@@ -234,16 +234,16 @@
     }
     
     .one:hover{
-      color: #EA5455;
+      color: #E53935; /* #EA5455 */
     }
     .two:hover{
-      color: #F7B633;
+      color: #1565C0; /* #F7B633 */
     }
     .three:hover{
-      color: #00B8A9;
+      color: #FBC02D; /* #00B8A9 */
     }
     .four:hover{
-      color: #344CB7;
+      color: #FFFFFF; /* #344CB7 */
     }
 
     .background {
@@ -287,10 +287,10 @@
         
         <img src="assets/screen.png" alt="overlay" class="screen-overlay">
         <div class="dots">
-            <div class="dot"><a href="index.html"><img src="assets/dot.svg"></a></div>
-            <div class="dot"><a href="index.html"><img src="assets/dot.svg"></a></div>
-            <div class="dot"><a href="index.html"><img src="assets/dot.svg"></a></div>
-            <div class="dot"><a href="index.html"><img src="assets/dot.svg"></a></div>
+            <div class="dot"><a href="index.html" class="first-dot"><img src="assets/dot.svg"></a></div>
+            <div class="dot"><a href="index.html" class="second-dot"><img src="assets/dot.svg"></a></div>
+            <div class="dot"><a href="index.html" class="third-dot"><img src="assets/dot.svg"></a></div>
+            <div class="dot"><a href="index.html" class="fourth-dot"><img src="assets/dot.svg"></a></div>
         </div>
     </div>
 
@@ -299,17 +299,109 @@
     <script>
       const colors = ['#E53935', '#1565C0', '#FBC02D', '#FFFFFF', '#000000'];
       const background = document.querySelector('.background');
-  
-      for (let i = 0; i < 30; i++) {
-        const block = document.createElement('div');
-        block.classList.add('block');
-        block.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
-        block.style.setProperty('--width', `${Math.random() * 150 + 50}px`);
-        block.style.setProperty('--height', `${Math.random() * 150 + 50}px`);
-        block.style.left = `${Math.random() * 95}vw`;
-        block.style.top = `${Math.random() * 80}vh`;
-        background.appendChild(block);
+      
+      function createDeStijlBlocks() {
+        // Clear existing blocks
+        background.innerHTML = '';
+        
+        for (let i = 0; i < 18; i++) {
+          const block = document.createElement('div');
+          block.classList.add('block');
+          block.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
+          block.style.setProperty('--width', `${Math.random() * 150 + 50}px`);
+          block.style.setProperty('--height', `${Math.random() * 150 + 50}px`);
+          block.style.left = `${Math.random() * 95}vw`;
+          block.style.top = `${Math.random() * 80}vh`;
+          background.appendChild(block);
+        }
       }
+
+      function createLorenzAttractor() {
+        // Get the screen and preserve existing content
+        const screen = document.querySelector('.screen');
+        
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.classList.add('lorenz-canvas');
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.borderRadius = '20px';
+        canvas.style.zIndex = '-1'; // Place behind text
+        screen.insertBefore(canvas, screen.firstChild); // Insert at start to be behind text
+
+        // De Stijl colors
+        const colors = ['#E53935', '#1565C0', '#FBC02D', '#000000'];
+        
+        // Lorenz parameters
+        const sigma = 10;
+        const rho = 28;
+        const beta = 9/3;
+        const dt = 0.01;
+        
+        let x = 0.7;
+        let y = 12;
+        let z = 0;
+        
+        function updatePoint() {
+          const dx = sigma * (y - x) * dt;
+          const dy = (x * (rho - z) - y) * dt;
+          const dz = (x * y - beta * z) * dt;
+          
+          x += dx;
+          y += dy;
+          z += dz;
+          
+          return { x, y, z };
+        }
+        
+        function draw() {
+          const point = updatePoint();
+          const scale = 3; // Increased scale for wider pattern
+          const offsetX = canvas.width / 2;
+          const offsetY = canvas.height / 1.15;
+          
+          // Pick a random color for each point
+          ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+          ctx.fillRect(
+            offsetX + point.x * scale,
+            offsetY + point.y * scale,
+            2,
+            2
+          );
+        }
+        
+        function animate() {
+          if (!document.querySelector('.lorenz-canvas')) return;
+          draw();
+          requestAnimationFrame(animate);
+        }
+        
+        function resizeCanvas() {
+          canvas.width = screen.offsetWidth;
+          canvas.height = screen.offsetHeight;
+          ctx.fillStyle = '#d3eff5';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animate();
+      }
+
+      // Add click event listener to first dot
+      document.querySelector('.first-dot').addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent default link behavior
+        createDeStijlBlocks();
+      });
+
+      // Add click event listener to second dot
+      document.querySelector('.second-dot').addEventListener('click', function(e) {
+        e.preventDefault();
+        createLorenzAttractor();
+      });
     </script>
 </body>
 </html>
