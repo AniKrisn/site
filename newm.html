@@ -343,7 +343,7 @@
         // Reset variables
         let x = 0.7;
         let y = 12;
-        let z = 0;
+        let z = 300;
         let blockCount = 0;
         
         // De Stijl colors
@@ -368,10 +368,10 @@
         }
         
         function draw() {
-          if (blockCount >= 198) return; // Stop after 100 blocks
+          if (blockCount >= 65) return; // Stop after 100 blocks
           
           const point = updatePoint();
-          const scale = 20;
+          const scale = 21;
           const offsetX = canvas.width / 2;
           const offsetY = canvas.height / 1.15;
           
@@ -388,7 +388,7 @@
         
         function animate() {
           if (!document.querySelector('.lorenz-canvas')) return;
-          if (blockCount >= 198) return; // Stop animation after 100 blocks
+          if (blockCount >= 65) return; // Stop animation after 100 blocks
           draw();
           requestAnimationFrame(animate);
         }
