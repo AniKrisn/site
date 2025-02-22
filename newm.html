@@ -301,18 +301,24 @@
       const background = document.querySelector('.background');
       
       function createDeStijlBlocks() {
-        // Clear existing blocks
         background.innerHTML = '';
+        const gridSize = 200; // Size of each grid cell
+        const grid = Array(10).fill().map(() => Array(10).fill(false)); 
         
-        for (let i = 0; i < 18; i++) {
-          const block = document.createElement('div');
-          block.classList.add('block');
-          block.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
-          block.style.setProperty('--width', `${Math.random() * 150 + 50}px`);
-          block.style.setProperty('--height', `${Math.random() * 150 + 50}px`);
-          block.style.left = `${Math.random() * 95}vw`;
-          block.style.top = `${Math.random() * 80}vh`;
-          background.appendChild(block);
+        for (let i = 0; i < 50; i++) {
+          const row = Math.floor(Math.random() * 10);
+          const col = Math.floor(Math.random() * 10);
+          if (!grid[row][col]) {
+            grid[row][col] = true;
+            const block = document.createElement('div');
+            block.classList.add('block');
+            block.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
+            block.style.setProperty('--width', `${Math.random() * 150 + 50}px`);
+            block.style.setProperty('--height', `${Math.random() * 150 + 50}px`);
+            block.style.left = `${col * gridSize + Math.random() * 50}px`;
+            block.style.top = `${row * gridSize + Math.random() * 50}px`;
+            background.appendChild(block);
+          }
         }
       }
 
