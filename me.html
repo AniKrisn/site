@@ -29,7 +29,7 @@
     </main>
 </body>
 <script>
-const DEFAULT_PERCOLATION = 0.15;
+const DEFAULT_PERCOLATION = 0.1;
 const TRANSITION_DURATION = 0.8;
 const GRID_SIZE = 30;
 const UPDATE_INTERVAL = 25;
@@ -116,14 +116,23 @@ function updateTransitions(deltaTime) {
     }
 }
 
+let VERTICAL_JITTER = 5;
+const JITTER_DURATION = 4000;
+const JITTER_STEP = (5 - 0.3) / (JITTER_DURATION / 16); // ~60FPS
+
+const interval = setInterval(() => {
+    VERTICAL_JITTER = Math.max(0.3, VERTICAL_JITTER - JITTER_STEP);
+    if (VERTICAL_JITTER <= 0.3) clearInterval(interval);
+}, 16);
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.shadowBlur = 0;
 
     for (let r = 0; r < percolationGrid.length; r++) {
         for (let c = 0; c < percolationGrid[r].length; c++) {
-            const x = c * GRID_SIZE + (Math.random() * 2 - 1); // Small random jitter
-            const y = r * GRID_SIZE + (Math.random() * 2 - 1);
+            const x = c * GRID_SIZE + (Math.random() * 0.1) 
+            const y = r * GRID_SIZE + (Math.random() * VERTICAL_JITTER);
             const transitionValue = transitionGrid[r][c];
 
             if (transitionValue > 0) {
