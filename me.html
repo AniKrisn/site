@@ -116,6 +116,30 @@ function updateTransitions(deltaTime) {
     }
 }
 
+let showScratches = true;
+setTimeout(() => { showScratches = false; }, 3000);
+function drawScratches() {
+    if (!showScratches) return;
+
+    ctx.globalAlpha = 0.12;
+    ctx.fillStyle = '#ffffff';
+    
+    for (let i = 0; i < 20; i++) {
+        let x = Math.random() * canvas.width;
+        let y = Math.random() * canvas.height;
+        let length = Math.random() * 100 + 20;
+        let angle = (Math.random() - 0.5) * Math.PI;
+        
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillRect(0, 0, length, 1); // Thin white scratch line
+        ctx.restore();
+    }
+    
+    ctx.globalAlpha = 1;
+}
+
 let VERTICAL_JITTER = 5;
 const JITTER_DURATION = 4000;
 const JITTER_STEP = (5 - 0.3) / (JITTER_DURATION / 16); // ~60FPS
@@ -124,6 +148,8 @@ const interval = setInterval(() => {
     VERTICAL_JITTER = Math.max(0.3, VERTICAL_JITTER - JITTER_STEP);
     if (VERTICAL_JITTER <= 0.3) clearInterval(interval);
 }, 16);
+
+
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -143,9 +169,11 @@ function draw() {
                 ctx.fillRect(x, y, GRID_SIZE - 1, GRID_SIZE - 1);
                 ctx.globalAlpha = 1;
                 ctx.shadowBlur = 0;
+                
             }
         }
     }
+    drawScratches();
 }
 
 let lastTime = 0, accumulatedTime = 0;
