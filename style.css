@@ -54,12 +54,6 @@ details > summary h2 {
   margin: 0;
 }
 
-@media screen and (min-height: 650px) {
-    .index-page {
-        overflow: hidden;
-    }
-}
-
 .photo-page {
     padding-left: 0;
     height: 100vh;

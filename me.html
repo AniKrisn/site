@@ -5,93 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>akrishnan</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            margin: 0;
-        }
-        body {
-            position: relative;
-        }
-
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('assets/grad4.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0;
-            animation: fadeInBackground 3s forwards;
-            z-index: -1;
-        }
-
-        @keyframes fadeInBackground {
-            from { opacity: 0; }
-            to { opacity: 0.6; }
-        }
-
-        /* Trigger fade-out when .fading-out is added to the body */
-        body.fading-out::before {
-            animation: fadeOutBackground 0.3s forwards;
-        }
-
-        @keyframes fadeOutBackground {
-            from { opacity: 0.6; }
-            to   { opacity: 0; }
-        }
-    </style>
 </head>
 <body>
     <main>
         <div class="name"><span class="flashing-cursor">|</span><a href="index.html">Ani Krishnan</a></div>
         
-        <div>
-            Interested in <br>
-            &emsp;qualia/meditation research <br>
-            &emsp;computation theory<br>
-            &emsp;analog synthesis <br><br>
-
-            Getting into <br>
-            &emsp;human-AI interaction <br>
-            &emsp;compilers <br><br>
-
-            Want to get into <br>
-            &emsp;GTM engineering <br>
-            &emsp;building with MCP <br>
-            &emsp;category theory <br><br>
-
+        <div> 
+            <br>
+            &emsp;GTM <a href="https://tldraw.dev/">@tldraw</a> <br>  
+            <br>
+            &emsp;Currently into <br>
+            &emsp;&emsp;<a href="https://qri.org/">meditation research</a> <br>
+            &emsp;&emsp;analog synthesis <br>
+            &emsp;&emsp;human-AI interaction <br>
+            &emsp;&emsp;programming language design <br>
+            <br>
+            &emsp;Want to get into <br>
+            &emsp;&emsp;GTM engineering <br>
+            &emsp;&emsp;MCP apps <br>
+            &emsp;&emsp;category theory <br><br>
         </div>
         
     </main>
-
-    <script>
-        // Wait until the DOM is fully loaded to attach the event listener.
-        document.addEventListener("DOMContentLoaded", function() {
-            // Select the link that leads to index.html on me.html.
-            var indexLink = document.querySelector('a[href="index.html"]');
-            
-            if (indexLink) {
-            indexLink.addEventListener("click", function(e) {
-                e.preventDefault(); // Prevent the immediate navigation.
-                var destination = this.href; // Store the target URL ("index.html").
-                
-                // Add the fading-out class to trigger the reverse fade-out animation.
-                document.body.classList.add("fading-out");
-        
-                setTimeout(function() {
-                    window.location.href = destination;
-                }, 200);  
-            });
-            }
-        });
-
-
-    </script>
 </body>
+<script>
+const DEFAULT_PERCOLATION = 0.15;
+const TRANSITION_DURATION = 0.8;
+const GRID_SIZE = 30;
+const UPDATE_INTERVAL = 25;
+const GLOW_INTENSITY = '20px';
+const OFF_COLOR = '#1a1a1a';
+const ON_COLOR = '#e6f7ff';
+const GLOW_COLOR = 'rgba(135, 206, 250, 0.8)';
+
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+document.body.appendChild(canvas);
+canvas.style.position = 'fixed';
+canvas.style.top = '0';
+canvas.style.left = '0';
+canvas.style.width = '100%';
+canvas.style.height = '100%';
+canvas.style.zIndex = '-1';
+canvas.style.opacity = '0.3'
+canvas.style.backgroundColor = OFF_COLOR;
+document.body.style.backgroundColor = OFF_COLOR;
+document.body.style.margin = '0';
+
+let percolationGrid = [];
+let transitionGrid = [];
+let decayTimerGrid = [];
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const cols = Math.ceil(canvas.width / GRID_SIZE);
+    const rows = Math.ceil(canvas.height / GRID_SIZE);
+    
+    percolationGrid = Array.from({ length: rows }, () =>
+        Array.from({ length: cols }, () => Math.random() < DEFAULT_PERCOLATION)
+    );
+
+    transitionGrid = percolationGrid.map(row => row.map(cell => (cell ? 1 : 0)));
+    decayTimerGrid = percolationGrid.map(row => row.map(() => null));
+}
+
+function getNeighbors(r, c) {
+    const directions = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],           [0, 1],
+        [1, -1],  [1, 0],   [1, 1]
+    ];
+    return directions.map(([dr, dc]) => percolationGrid[r + dr]?.[c + dc] || false);
+}
+
+function getNeighborsCount(r, c) {
+    return getNeighbors(r, c).filter(Boolean).length;
+}
+
+function updatePercolationGrid() {
+    const newGrid = percolationGrid.map((row, r) =>
+        row.map((cell, c) => {
+            const neighbors = getNeighborsCount(r, c);
+            return cell ? neighbors === 2 || neighbors === 3 : neighbors === 3;
+        })
+    );
+    percolationGrid = newGrid;
+}
+
+function updateTransitions(deltaTime) {
+    const transitionSpeed = 1 / (TRANSITION_DURATION * 1000);
+    const decayDuration = 1200; // 1.5s in milliseconds
+
+    for (let r = 0; r < transitionGrid.length; r++) {
+        for (let c = 0; c < transitionGrid[r].length; c++) {
+            const active = percolationGrid[r][c];
+
+            if (active) {
+                transitionGrid[r][c] = Math.min(1, transitionGrid[r][c] + deltaTime * transitionSpeed);
+                decayTimerGrid[r][c] = null; // Reset decay timer
+            } else {
+                if (decayTimerGrid[r][c] === null) {
+                    decayTimerGrid[r][c] = performance.now(); // Start decay timer
+                } else if (performance.now() - decayTimerGrid[r][c] > decayDuration) {
+                    transitionGrid[r][c] = Math.max(0, transitionGrid[r][c] - deltaTime * transitionSpeed);
+                }
+            }
+        }
+    }
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.shadowBlur = 0;
+
+    for (let r = 0; r < percolationGrid.length; r++) {
+        for (let c = 0; c < percolationGrid[r].length; c++) {
+            const x = c * GRID_SIZE + (Math.random() * 2 - 1); // Small random jitter
+            const y = r * GRID_SIZE + (Math.random() * 2 - 1);
+            const transitionValue = transitionGrid[r][c];
+
+            if (transitionValue > 0) {
+                ctx.shadowBlur = parseInt(GLOW_INTENSITY) * transitionValue;
+                ctx.shadowColor = GLOW_COLOR;
+                ctx.fillStyle = ON_COLOR;
+                ctx.globalAlpha = transitionValue;
+                ctx.fillRect(x, y, GRID_SIZE - 1, GRID_SIZE - 1);
+                ctx.globalAlpha = 1;
+                ctx.shadowBlur = 0;
+            }
+        }
+    }
+}
+
+let lastTime = 0, accumulatedTime = 0;
+
+function animate(currentTime) {
+    if (!lastTime) lastTime = currentTime;
+    const deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+
+    updateTransitions(deltaTime);
+
+    accumulatedTime += deltaTime;
+    if (accumulatedTime > UPDATE_INTERVAL) {
+        updatePercolationGrid();
+        accumulatedTime = 0;
+    }
+
+    draw();
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+requestAnimationFrame(animate);
+</script>
+
+
 </html>
