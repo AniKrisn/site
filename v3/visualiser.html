@@ -21,7 +21,7 @@
         .note {
             font-family: "Geist Mono", monospace;
             position: fixed;
-            bottom: 2vh;
+            bottom: 2.2vh;
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
@@ -30,6 +30,11 @@
         }
         a {
             text-decoration: none;
+            color: rgba(1, 218, 59, 0.485);
+            transition: color 0.2s ease-in-out;
+        }
+        a:hover {
+            color: rgb(229, 85, 85);
         }
     </style>
 </head>
@@ -39,7 +44,7 @@
     <script>
         const canvas = document.getElementById("pixelCanvas");
         const ctx = canvas.getContext("2d");
-        const pixelSize = 4;
+        const pixelSize = 6;
         const gap = 4;
         const gridSize = 100;
         const canvasSize = 400;
@@ -57,8 +62,8 @@
         source.connect(analyser);
         analyser.connect(audioCtx.destination);
 
-        let minRadius = 40;
-        let maxRadius = 250;
+        let minRadius = 35;
+        let maxRadius = 240;
         let currentRadius = minRadius;
 
         const getCircleRadius = () => {
@@ -95,11 +100,11 @@
             const avgFreq = dataArray.reduce((sum, val) => sum + val, 0) / bufferLength;
             const color = {
                 r: Math.min(255, avgFreq * 2),
-                g: Math.max(50, 255 - avgFreq * 2),
+                g: Math.max(100, 255 - avgFreq * 2),
                 b: Math.max(100, avgFreq)
             };
 
-            for (let i = 0; i < gridSize * gridSize * 0.2; i++) {
+            for (let i = 0; i < gridSize * gridSize * 0.16; i++) {
                 const x = Math.floor(Math.random() * gridSize);
                 const y = Math.floor(Math.random() * gridSize);
                 const index = y * gridSize + x;
@@ -107,7 +112,7 @@
                 const pixelCenterY = y * (pixelSize + gap) + pixelSize / 2;
 
                 if (isInsideCircle(pixelCenterX, pixelCenterY, radius)) {
-                    pixelOpacities[index] = Math.random() * 0.6 + 0.2;
+                    pixelOpacities[index] = Math.random() * 0.65 + 0.2;
                 } else {
                     pixelOpacities[index] = 0;
                 }
