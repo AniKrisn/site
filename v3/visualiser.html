@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV3</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #222;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="pixelCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById("pixelCanvas");
+        const ctx = canvas.getContext("2d");
+        const pixelSize = 4;
+        const gap = 4;
+        const gridSize = 100;
+        const canvasSize = 400;
+        const pixelOpacities = new Array(gridSize * gridSize).fill(0);
+        let frameCount = 0;
+
+        const getCircleRadius = (frame) => {
+            const minRadius = 80;
+            const maxRadius = 200;
+            const amplitude = (maxRadius - minRadius) / 2;
+            const centerRadius = minRadius + amplitude;
+            return centerRadius + amplitude * Math.sin(frame * 0.01);
+        };
+
+        const isInsideCircle = (x, y, radius) => {
+            const centerX = canvasSize / 2;
+            const centerY = canvasSize / 2;
+            const dx = x - centerX;
+            const dy = y - centerY;
+            return dx * dx + dy * dy <= radius * radius;
+        };
+
+        const drawPixels = (radius) => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    const index = y * gridSize + x;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${pixelOpacities[index]})`;
+                    ctx.fillRect(x * (pixelSize + gap), y * (pixelSize + gap), pixelSize, pixelSize);
+                }
+            }
+        };
+
+        const updatePixels = (radius) => {
+            const pixelsToUpdate = Math.floor(gridSize * gridSize * 0.2);
+            for (let i = 0; i < pixelsToUpdate; i++) {
+                const x = Math.floor(Math.random() * gridSize);
+                const y = Math.floor(Math.random() * gridSize);
+                const index = y * gridSize + x;
+                const pixelCenterX = x * (pixelSize + gap) + pixelSize / 2;
+                const pixelCenterY = y * (pixelSize + gap) + pixelSize / 2;
+
+                if (isInsideCircle(pixelCenterX, pixelCenterY, radius)) {
+                    pixelOpacities[index] = Math.random() * 0.6 + 0.2;
+                } else {
+                    pixelOpacities[index] = 0;
+                }
+            }
+        };
+
+        const animate = () => {
+            frameCount++;
+            const radius = getCircleRadius(frameCount);
+
+            if (frameCount % 5 === 0) {
+                updatePixels(radius);
+            }
+
+            drawPixels(radius);
+            requestAnimationFrame(animate);
+        };
+
+        animate();
+    </script>
+</body>
+</html>
