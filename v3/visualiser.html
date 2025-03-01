@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AV3</title>
+    <title>Audio Visualizer</title>
     <style>
         body {
             display: flex;
@@ -11,7 +11,11 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: #222;
+            background: #1f1f1f;
+        }
+        canvas {
+            border: 1px dotted #ffffff;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -26,13 +30,26 @@
         const canvasSize = 400;
         const pixelOpacities = new Array(gridSize * gridSize).fill(0);
         let frameCount = 0;
+        let isPlaying = false;
 
-        const getCircleRadius = (frame) => {
-            const minRadius = 80;
-            const maxRadius = 200;
-            const amplitude = (maxRadius - minRadius) / 2;
-            const centerRadius = minRadius + amplitude;
-            return centerRadius + amplitude * Math.sin(frame * 0.01);
+        const audio = new Audio("v3.wav");
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        const source = audioCtx.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        let minRadius = 50;
+        let maxRadius = 200;
+        let currentRadius = minRadius;
+
+        const getCircleRadius = () => {
+            analyser.getByteFrequencyData(dataArray);
+            const avgFreq = dataArray.reduce((sum, val) => sum + val, 0) / bufferLength;
+            return minRadius + (maxRadius - minRadius) * (avgFreq / 255);
         };
 
         const isInsideCircle = (x, y, radius) => {
@@ -43,20 +60,31 @@
             return dx * dx + dy * dy <= radius * radius;
         };
 
-        const drawPixels = (radius) => {
+        const drawPixels = (radius, color) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
                     const index = y * gridSize + x;
-                    ctx.fillStyle = `rgba(255, 255, 255, ${pixelOpacities[index]})`;
+                    ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${pixelOpacities[index]})`;
                     ctx.fillRect(x * (pixelSize + gap), y * (pixelSize + gap), pixelSize, pixelSize);
                 }
             }
         };
 
         const updatePixels = (radius) => {
-            const pixelsToUpdate = Math.floor(gridSize * gridSize * 0.2);
-            for (let i = 0; i < pixelsToUpdate; i++) {
+            analyser.getByteFrequencyData(dataArray);
+            const avgFreq = dataArray.reduce((sum, val) => sum + val, 0) / bufferLength;
+            const color = {
+                r: Math.min(255, avgFreq * 2),
+                g: Math.max(50, 255 - avgFreq * 2),
+                b: Math.max(100, avgFreq)
+            };
+
+            for (let i = 0; i < gridSize * gridSize * 0.2; i++) {
                 const x = Math.floor(Math.random() * gridSize);
                 const y = Math.floor(Math.random() * gridSize);
                 const index = y * gridSize + x;
@@ -69,21 +97,31 @@
                     pixelOpacities[index] = 0;
                 }
             }
+            return color;
         };
 
         const animate = () => {
+            if (!isPlaying) return;
             frameCount++;
-            const radius = getCircleRadius(frameCount);
-
-            if (frameCount % 5 === 0) {
-                updatePixels(radius);
-            }
-
-            drawPixels(radius);
+            currentRadius = getCircleRadius();
+            const color = updatePixels(currentRadius);
+            drawPixels(currentRadius, color);
             requestAnimationFrame(animate);
         };
 
-        animate();
+        canvas.addEventListener("click", () => {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            } else {
+                if (audioCtx.state === "suspended") {
+                    audioCtx.resume();
+                }
+                audio.play();
+                isPlaying = true;
+                animate();
+            }
+        });
     </script>
 </body>
 </html>
