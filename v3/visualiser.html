@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Visualizer</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:wght@500&family=Parkinsans:wght@300..800&family=Sora:wght@100..800&display=swap');
         body {
             display: flex;
             justify-content: center;
@@ -17,10 +18,24 @@
             border: 1px dotted #ffffff;
             cursor: pointer;
         }
+        .note {
+            font-family: "Geist Mono", monospace;
+            position: fixed;
+            bottom: 2vh;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            color: #7b7b7b;
+            font-size: 1vw;
+        }
+        a {
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
     <canvas id="pixelCanvas" width="400" height="400"></canvas>
+    <div class="note">inspired by <a href="https://x.com/alex_krasikau/status/1895506829129695508">Alex Krasikov</a></div>
     <script>
         const canvas = document.getElementById("pixelCanvas");
         const ctx = canvas.getContext("2d");
@@ -42,8 +57,8 @@
         source.connect(analyser);
         analyser.connect(audioCtx.destination);
 
-        let minRadius = 50;
-        let maxRadius = 200;
+        let minRadius = 40;
+        let maxRadius = 250;
         let currentRadius = minRadius;
 
         const getCircleRadius = () => {
@@ -121,6 +136,12 @@
                 isPlaying = true;
                 animate();
             }
+        });
+
+        audio.addEventListener("ended", () => {
+            isPlaying = false;
+            pixelOpacities.fill(0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
     </script>
 </body>
