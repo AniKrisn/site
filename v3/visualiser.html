@@ -8,16 +8,23 @@
         @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:wght@500&family=Parkinsans:wght@300..800&family=Sora:wght@100..800&display=swap');
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background: #1f1f1f;
         }
+        
+        /* Responsive canvas sizing */
         canvas {
             border: 1px dotted #ffffff;
             cursor: pointer;
+            max-width: 90vw;
+            max-height: 90vw;
         }
+        
+        /* Mobile optimization for the note text */
         .note {
             font-family: "Geist Mono", monospace;
             position: fixed;
@@ -27,12 +34,28 @@
             z-index: 100;
             color: #7b7b7b;
             font-size: 1vw;
+            text-align: center;
+            width: 90%;
         }
+        
+        /* Responsive font size for the note */
+        @media (max-width: 768px) {
+            .note {
+                font-size: 3vw;
+            }
+            
+            canvas {
+                width: 300px;
+                height: 300px;
+            }
+        }
+        
         a {
             text-decoration: none;
             color: rgba(1, 218, 59, 0.485);
             transition: color 0.2s ease-in-out;
         }
+        
         a:hover {
             color: rgb(229, 85, 85);
         }
@@ -47,10 +70,27 @@
         const pixelSize = 6;
         const gap = 4;
         const gridSize = 100;
-        const canvasSize = 400;
+        let canvasSize = 400;
         const pixelOpacities = new Array(gridSize * gridSize).fill(0);
         let frameCount = 0;
         let isPlaying = false;
+
+        // Adjust canvas size based on screen size
+        function adjustCanvasSize() {
+            if (window.innerWidth <= 768) {
+                canvas.width = 300;
+                canvas.height = 300;
+                canvasSize = 300;
+            } else {
+                canvas.width = 400;
+                canvas.height = 400;
+                canvasSize = 400;
+            }
+        }
+        
+        // Call initially and on resize
+        adjustCanvasSize();
+        window.addEventListener('resize', adjustCanvasSize);
 
         const audio = new Audio("v3.wav");
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -69,7 +109,9 @@
         const getCircleRadius = () => {
             analyser.getByteFrequencyData(dataArray);
             const avgFreq = dataArray.reduce((sum, val) => sum + val, 0) / bufferLength;
-            return minRadius + (maxRadius - minRadius) * (avgFreq / 255);
+            // Adjust radius based on canvas size
+            const scaleFactor = canvasSize / 400;
+            return (minRadius + (maxRadius - minRadius) * (avgFreq / 255)) * scaleFactor;
         };
 
         const isInsideCircle = (x, y, radius) => {
@@ -86,11 +128,20 @@
             ctx.lineWidth = 2;
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
+            // Calculate the pixel and gap size based on canvas dimensions
+            const scaledPixelSize = pixelSize * (canvasSize / 400);
+            const scaledGap = gap * (canvasSize / 400);
+
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
                     const index = y * gridSize + x;
                     ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${pixelOpacities[index]})`;
-                    ctx.fillRect(x * (pixelSize + gap), y * (pixelSize + gap), pixelSize, pixelSize);
+                    ctx.fillRect(
+                        x * (scaledPixelSize + scaledGap), 
+                        y * (scaledPixelSize + scaledGap), 
+                        scaledPixelSize, 
+                        scaledPixelSize
+                    );
                 }
             }
         };
@@ -104,12 +155,16 @@
                 b: Math.max(100, avgFreq)
             };
 
+            // Calculate the pixel and gap size based on canvas dimensions
+            const scaledPixelSize = pixelSize * (canvasSize / 400);
+            const scaledGap = gap * (canvasSize / 400);
+
             for (let i = 0; i < gridSize * gridSize * 0.16; i++) {
                 const x = Math.floor(Math.random() * gridSize);
                 const y = Math.floor(Math.random() * gridSize);
                 const index = y * gridSize + x;
-                const pixelCenterX = x * (pixelSize + gap) + pixelSize / 2;
-                const pixelCenterY = y * (pixelSize + gap) + pixelSize / 2;
+                const pixelCenterX = x * (scaledPixelSize + scaledGap) + scaledPixelSize / 2;
+                const pixelCenterY = y * (scaledPixelSize + scaledGap) + scaledPixelSize / 2;
 
                 if (isInsideCircle(pixelCenterX, pixelCenterY, radius)) {
                     pixelOpacities[index] = Math.random() * 0.65 + 0.2;
@@ -130,6 +185,22 @@
         };
 
         canvas.addEventListener("click", () => {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            } else {
+                if (audioCtx.state === "suspended") {
+                    audioCtx.resume();
+                }
+                audio.play();
+                isPlaying = true;
+                animate();
+            }
+        });
+
+        // Handle touch events for mobile
+        canvas.addEventListener("touchstart", (e) => {
+            e.preventDefault(); // Prevent default touch behavior
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
